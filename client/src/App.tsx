@@ -7,6 +7,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const user: IUser = {
+  id: 'foo',
+  userName: '',
+  displayName: '',
+  avatarUrl: '',
+  status: '',
+  email: '',
+  isAdmin: true,
+};
+console.log(user);
+
 type AppProps = {
   children?: React.ReactNode;
 };

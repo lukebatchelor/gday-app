@@ -2,14 +2,16 @@
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
-    "module": "esnext",
+    "declaration": false,
+    "target": "esnext",
+    "module": "commonjs",
     "sourceMap": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
     "jsx": "react",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["client/src/**/*.{ts,tsx}", "server/**/*.ts"]
+  "include": ["./client", "./server", "./typings"]
 }

@@ -6,7 +6,7 @@
   "author": "Luke.Batchelor <batchelor.luke+git@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf -dist",
+    "clean": "rm -rf dist",
     "build-client": "webpack --mode=production",
     "build-server": "tsc -p server.tsconfig.json",
     "dev": "webpack-dev-server",
