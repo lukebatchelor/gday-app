@@ -64,18 +64,9 @@ async function deleteRequest<Req, Res>(url: string, body?: Req) {
   }
 }
 
-export async function attemptLogin(email: string, password: string) {
-  return {
-    user: {
-      userName: 'foo',
-      displayName: 'foo',
-      isAdmin: true,
-      id: '1',
-    },
-    loggedIn: true,
-  };
-  // const body = { email, password };
-  // return postRequest<any, any>('/api/users/authenticate', body);
+export async function attemptLogin(userName: string, password: string) {
+  const body = { userName, password };
+  return postRequest<PostLoginRequestBody, PostLoginResponseBody>('/api/users/authenticate', body);
 }
 
 export async function logout() {
@@ -90,7 +81,12 @@ export async function checkLoggedIn() {
       isAdmin: true,
       id: '1',
     },
-    loggedIn: false,
+    loggedIn: true,
   };
   // return getRequest<any>('/api/users/authenticated');
+}
+
+export async function createUser(userObj: PostSignupRequestBody) {
+  const body = userObj;
+  return postRequest<PostSignupRequestBody, PostSignupResponseBody>('/api/users/signup', body);
 }

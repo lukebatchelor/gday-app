@@ -11,7 +11,7 @@ declare type PostSignupRequest = TypedRequest<{}, PostSignupRequestBody, {}>;
 declare type PostSignupResponseBody = { loggedIn: boolean; user?: IUser };
 declare type PostSignupResponse = TypedResponse<PostSignupResponseBody>;
 
-// POST /api/users/login
+// POST /api/users/authenticate
 declare type PostLoginRequestBody = { userName: string; password: string };
 declare type PostLoginRequest = TypedRequest<{}, PostLoginRequestBody, {}>;
 declare type PostLoginResponseBody = { loggedIn: boolean; user?: IUser };

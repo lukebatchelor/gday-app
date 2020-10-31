@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 
 import {
   makeStyles,
@@ -6,16 +6,16 @@ import {
   CssBaseline,
   FormHelperText,
   Button,
-  Box,
   Avatar,
   TextField,
   Typography,
+  Box,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { Link, RouteComponentProps } from '@reach/router';
 import { useForm, Controller } from 'react-hook-form';
 
 import { attemptLogin } from '../api';
-import { RouteComponentProps } from '@reach/router';
 import { AppContext } from '../contexts/AppContext';
 import { UserContext } from '../contexts/UserContext';
 
@@ -49,24 +49,42 @@ const defaultValues: FormValues = {
   password: '',
 };
 
+type FormErrors = {
+  username?: string;
+  password?: string;
+  login?: string;
+};
+
+const defaultErrors: FormErrors = {
+  username: '',
+  password: '',
+  login: '',
+};
+
 export type SignInPageProps = RouteComponentProps;
 export function SignInPage(props: SignInPageProps) {
   const { navigate } = props;
   const appContext = useContext(AppContext);
-  const { handleSubmit, control } = useForm<FormValues>({
-    defaultValues,
-  });
   const [, setUser] = useContext(UserContext);
+  const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
+  const [errors, setErrors] = useState<FormErrors>(defaultErrors);
   const classes = useStyles();
 
   const onSubmit = (data: FormValues) => {
     const { username, password } = data;
+    if (!username || !password) {
+      setErrors({
+        username: !username ? 'Username is required' : '',
+        password: !password ? 'Password is required' : '',
+      });
+      return;
+    }
     attemptLogin(username, password).then((res) => {
-      console.log(res);
       if (res.loggedIn) {
         setUser({ ...res.user, loggedIn: true });
         navigate(`${appContext.basePathPrefix}/`);
-        console.log('here');
+      } else {
+        setErrors({ login: 'Username or Password is incorrect' });
       }
     });
   };
@@ -93,6 +111,8 @@ export function SignInPage(props: SignInPageProps) {
                 margin="normal"
                 fullWidth
                 autoFocus
+                error={!!errors.username}
+                helperText={errors.username}
                 onChange={onChange}
                 onBlur={onBlur}
                 value={value}
@@ -110,16 +130,22 @@ export function SignInPage(props: SignInPageProps) {
                 variant="outlined"
                 fullWidth
                 margin="normal"
+                error={!!errors.password}
+                helperText={errors.password}
                 onChange={onChange}
                 onBlur={onBlur}
                 value={value}
               />
             )}
           />
-
+          <FormHelperText error>{errors.login}</FormHelperText>
           <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
             Sign In
           </Button>
+          <Box mt={2} />
+          <Typography align="center">
+            Don&apos;t have an account? <Link to="/sign-up">Sign up</Link>
+          </Typography>
         </form>
       </div>
     </Container>

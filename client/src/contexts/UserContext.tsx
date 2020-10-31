@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 type User = IUser & { loggedIn: boolean };
 type UserContextType = [User, (user: User) => void];
-const defaultUser: User = { isAdmin: false, userName: '', displayName: '', id: '', loggedIn: false };
+const defaultUser: User = { userName: '', displayName: '', isAdmin: false, id: '', loggedIn: false };
 const UserContext = React.createContext<UserContextType>([defaultUser, () => {}]);
 
 type Props = {

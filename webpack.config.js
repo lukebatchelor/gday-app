@@ -18,6 +18,12 @@ const config = {
     port: 8000,
     compress: true,
     historyApiFallback: true,
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:9000',
+      },
+    ],
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
