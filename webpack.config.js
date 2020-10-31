@@ -17,6 +17,7 @@ const config = {
     stats: 'errors-only',
     port: 8000,
     compress: true,
+    historyApiFallback: true,
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
@@ -39,5 +40,15 @@ const config = {
     }),
   ],
 };
+
+const envVarMap = {
+  APP_BASE_PATH: '',
+};
+
+if (process.env.PROD) {
+  envVarMap['APP_BASE_PATH'] = '';
+}
+
+config.plugins.push(new webpack.EnvironmentPlugin(envVarMap));
 
 module.exports = config;

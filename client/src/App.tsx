@@ -1,39 +1,42 @@
-import React from 'react';
-import { makeStyles, Avatar, Container, CssBaseline, AppBar, Toolbar, Typography, IconButton } from '@material-ui/core';
+import React, { useContext, useEffect } from 'react';
+import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core';
+import { AppContext } from './contexts/AppContext';
+import { UserContext } from './contexts/UserContext';
 
-const useStyles = makeStyles((theme) => ({
-  avatar: {
-    background: theme.palette.success.main,
-  },
-}));
+import { navigate, Router } from '@reach/router';
+import { HomePage } from './pages/HomePage';
+import { SignInPage } from './pages/SignInPage';
+import { SignUpPage } from './pages/SignUpPage';
+import { checkLoggedIn } from './api';
 
-const user: IUser = {
-  id: 'foo',
-  userName: '',
-  displayName: '',
-  avatarUrl: '',
-  status: '',
-  isAdmin: true,
-};
-console.log(user);
+const theme = responsiveFontSizes(createMuiTheme());
 
 type AppProps = {
   children?: React.ReactNode;
 };
 export function App(props: AppProps) {
-  const classes = useStyles();
+  const appContext = useContext(AppContext);
+  const [, setUser] = useContext(UserContext);
+
+  useEffect(() => {
+    (async () => {
+      const { loggedIn, user } = await checkLoggedIn();
+      if (!loggedIn) {
+        setUser({ userName: '', displayName: '', loggedIn: false, id: '', isAdmin: false });
+        navigate(`${appContext.basePathPrefix}/sign-in`);
+        return;
+      }
+      setUser({ ...user, loggedIn: true });
+    })();
+  }, []);
 
   return (
-    <Container>
-      <CssBaseline />
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton color="inherit" aria-label="Home" edge="start">
-            <Avatar src="/android-chrome-192x192.png" alt="LB" className={classes.avatar} />
-          </IconButton>
-          <Typography variant="h5">2020 Typescript Webpack Static App Template</Typography>
-        </Toolbar>
-      </AppBar>
-    </Container>
+    <ThemeProvider theme={theme}>
+      <Router basepath={appContext.basePathPrefix}>
+        <SignInPage path="/sign-in" />
+        <SignUpPage path="/sign-up" />
+        <HomePage default path="/" />
+      </Router>
+    </ThemeProvider>
   );
 }
