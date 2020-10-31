@@ -1,24 +1,52 @@
-import React from 'react';
-import { AppBar, Avatar, Container, CssBaseline, IconButton, makeStyles, Toolbar, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Container,
+  CssBaseline,
+  IconButton,
+  makeStyles,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core';
 import { RouteComponentProps } from '@reach/router';
+import { ChatsView } from '../components/ChatsView';
+import { ConversationView } from '../components/ConversationView';
 
 const useStyles = makeStyles((theme) => ({}));
+
+type View = 'Chats' | 'Conversation';
 
 type HomeProps = RouteComponentProps;
 export function HomePage(props: HomeProps) {
   const classes = useStyles();
+  const theme = useTheme();
+
+  const [curView, setCurView] = useState<View>('Chats');
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  if (isMobile) {
+    return (
+      <Box>
+        <CssBaseline />
+        <ChatsView isMobile={true} />
+      </Box>
+    );
+  }
+
+  console.log(isMobile);
 
   return (
-    <Container>
+    <Box>
       <CssBaseline />
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton color="inherit" aria-label="Home" edge="start">
-            <Avatar src="/android-chrome-192x192.png" alt="LB" />
-          </IconButton>
-          <Typography variant="h5">2020 Typescript Webpack Static App Template</Typography>
-        </Toolbar>
-      </AppBar>
-    </Container>
+      <Box display="flex">
+        <ChatsView isMobile={isMobile} />
+        <ConversationView isMobile={isMobile} />
+      </Box>
+    </Box>
   );
 }
