@@ -1,10 +1,10 @@
 import { Application } from 'express';
-import blahRoutes from './blah-routes';
+import usersRoutes from './users-routes';
 
 function configure(app: Application) {
-  app.use('/api/blah', blahRoutes);
+  app.use('/api/users', usersRoutes);
 }
 
 export default {
-  configure
+  configure,
 };

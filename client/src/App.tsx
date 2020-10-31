@@ -13,7 +13,6 @@ const user: IUser = {
   displayName: '',
   avatarUrl: '',
   status: '',
-  email: '',
   isAdmin: true,
 };
 console.log(user);

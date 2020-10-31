@@ -5,9 +5,8 @@ declare global {
     id: string;
     userName: string;
     displayName: string;
-    email: string;
-    avatarUrl: string;
-    status: string;
+    avatarUrl?: string;
+    status?: string;
     isAdmin: boolean;
   }
 }

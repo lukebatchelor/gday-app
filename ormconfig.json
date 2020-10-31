@@ -3,8 +3,11 @@
   "host": "localhost",
   "port": 3306,
   "username": "gday",
-  "password": "gday",
+  "password": "password",
   "database": "gday",
-  "entities": ["src/server/entity/*.ts"],
-  "migrations": ["src/server/migration/*.ts"]
+  "entities": ["server/entity/*.ts"],
+  "migrations": ["server/migration/*.ts"],
+  "cli": {
+    "migrationsDir": "server/migration"
+  }
 }

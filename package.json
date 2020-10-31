@@ -12,15 +12,19 @@
     "build:client": "webpack --mode=production",
     "build:server": "tsc -p server.tsconfig.json",
     "dev": "concurrently --kill-others-on-fail 'yarn dev-server' 'yarn dev-client'",
-    "dev:server": "ts-node-dev --watch 'server/**/*.ts' src/server/index.ts | ./node_modules/.bin/pino-pretty",
+    "dev:server": "ts-node-dev --project server.tsconfig.json --watch 'server/**/*.ts' server/index.ts | ./node_modules/.bin/pino-pretty",
     "dev:client": "webpack-dev-server",
     "dev:db": "docker-compose -f docker/docker-compose.yml up",
     "lint": "yarn eslint 'src/*.{js,ts,tsx}' --quiet --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:migrations:show": "TS_NODE_FILES=true ts-node ./node_modules/.bin/typeorm migration:show",
+    "db:migrations:generate": "TS_NODE_FILES=true ts-node ./node_modules/.bin/typeorm migration:generate -n",
+    "db:migrations:run": "TS_NODE_FILES=true ts-node ./node_modules/.bin/typeorm migration:run"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@types/react-dom": "^16.9.8",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -37,6 +41,7 @@
     "typeorm": "^0.2.28"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/cors": "^2.8.8",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.7",
