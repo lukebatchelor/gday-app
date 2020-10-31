@@ -107,6 +107,16 @@ conversationRoutes.post(
   })
 );
 
+conversationRoutes.get(
+  '/:id/messages',
+  loggedInMiddleware,
+  wrapExpressPromise<GetMessagesForConversationRequest, GetMessagesForConversationResponse>(async (req, res) => {
+    const { id: conversationId } = req.params;
+    const messages = (await Message.find({ conversation: conversationId })).map(mapMessage);
+    return { messages };
+  })
+);
+
 function mapMessage(message?: Message): IMessage {
   if (!message) {
     return null;
