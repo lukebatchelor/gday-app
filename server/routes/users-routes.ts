@@ -39,13 +39,29 @@ usersRoutes.post(
   '/authenticate',
   wrapExpressPromise<PostLoginRequest, PostLoginResponse>(async (req, res) => {
     const { userName, password } = req.body;
-    const userEntity = await User.findOne({ userName });
-    assertFound(userEntity);
-    const validPassword = bcrypt.compareSync(password, userEntity.password);
+    const user = await User.findOne({ userName });
+    assertFound(user);
+    const validPassword = bcrypt.compareSync(password, user.password);
     if (!validPassword) {
       return { loggedIn: false };
     }
-    return { loggedIn: true, user: mapUser(userEntity) };
+    req.session.userId = user.id;
+    return { loggedIn: true, user: mapUser(user) };
+  })
+);
+
+usersRoutes.get(
+  '/authenticated',
+  wrapExpressPromise<GetAuthenticatedRequest, GetAuthenticatedResponse>(async (req, res) => {
+    if (!req.session.userId) {
+      return { loggedIn: false };
+    }
+    const user = await User.findOne({ id: req.session.userId });
+    if (!user) {
+      return { loggedIn: false };
+    }
+
+    return { loggedIn: true, user: mapUser(user) };
   })
 );
 

@@ -6,7 +6,6 @@ import { User } from '../entity/User';
 const logger = pino();
 
 export default async function runStartupTasks() {
-  logger.info('HERE');
   const defaultAdminUserName = process.env.DEFAULT_ADMIN_USER_NAME;
   const defaultAdminPassword = process.env.DEFAULT_ADMIN_PASSWORD;
   if (!defaultAdminUserName || !defaultAdminPassword) {
