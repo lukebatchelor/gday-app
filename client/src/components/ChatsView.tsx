@@ -10,18 +10,11 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
-import CreateIcon from '@material-ui/icons/Create';
+
 import SearchIcon from '@material-ui/icons/Search';
 import { Controller, useForm } from 'react-hook-form';
 
 const useStyles = makeStyles((theme) => ({
-  composeButton: {
-    marginLeft: 'auto',
-  },
-  spacer: {
-    marginTop: theme.spacing(8),
-  },
   messageText: {
     flexGrow: 1,
     overflow: 'hidden',
@@ -42,6 +35,7 @@ type ChatsViewProps = {
   isMobile: boolean;
 };
 export function ChatsView(props: ChatsViewProps) {
+  const { isMobile } = props;
   const classes = useStyles();
   const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
 
@@ -52,27 +46,14 @@ export function ChatsView(props: ChatsViewProps) {
 
   return (
     <Box>
-      <AppBar position="relative">
-        <Toolbar>
-          <Avatar>
-            <PersonIcon />
-          </Avatar>
-          <Box mr={2} />
-          <Typography variant="h5">Chats</Typography>
-          <IconButton
-            aria-label="Compose new message"
-            // onClick={() => {}}
-            color="inherit"
-            size="small"
-            className={classes.composeButton}
-          >
-            <CreateIcon fontSize="small" />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
       {/* <Box className={classes.spacer} /> */}
-      <Box p={2}>
+      <Box
+        p={2}
+        maxHeight="calc(100vh - 64px)"
+        overflow="scroll"
+        width={isMobile ? 'auto' : '35vw'}
+        borderRight={isMobile ? '0px' : '2px solid #eee'}
+      >
         <form noValidate onSubmit={handleSubmit(onSearchSubmit)}>
           <Controller
             control={control}
@@ -81,7 +62,7 @@ export function ChatsView(props: ChatsViewProps) {
               <TextField
                 label="Seach"
                 variant="outlined"
-                size="small"
+                size="medium"
                 fullWidth
                 margin="normal"
                 onChange={onChange}
@@ -100,8 +81,8 @@ export function ChatsView(props: ChatsViewProps) {
         </form>
 
         <Box mt={2} display="flex" flexDirection="column">
-          {conversations.map((c) => (
-            <Box key={c} display="flex" marginY={1} alignItems="center">
+          {conversations.map((c, i) => (
+            <Box key={`${c}-${i}`} display="flex" marginY={1} alignItems="center">
               <Avatar></Avatar>
               <Box ml={2} display="flex" flexDirection="column" style={{ flex: '1', minWidth: 0 }}>
                 <Typography>Chat name</Typography>

@@ -15,8 +15,13 @@ import {
 import { RouteComponentProps } from '@reach/router';
 import { ChatsView } from '../components/ChatsView';
 import { ConversationView } from '../components/ConversationView';
+import { AppHeader } from '../components/AppHeader';
 
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({
+  spacer: {
+    marginTop: theme.spacing(8),
+  },
+}));
 
 type View = 'Chats' | 'Conversation';
 
@@ -33,19 +38,21 @@ export function HomePage(props: HomeProps) {
     return (
       <Box>
         <CssBaseline />
+        <AppHeader isMobile={true} />
+        <Box className={classes.spacer} />
         <ChatsView isMobile={true} />
       </Box>
     );
   }
 
-  console.log(isMobile);
-
   return (
     <Box>
       <CssBaseline />
+      <AppHeader isMobile={false} />
+      <Box className={classes.spacer} />
       <Box display="flex">
-        <ChatsView isMobile={isMobile} />
-        <ConversationView isMobile={isMobile} />
+        <ChatsView isMobile={false} />
+        <ConversationView isMobile={false} />
       </Box>
     </Box>
   );
