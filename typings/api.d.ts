@@ -6,6 +6,12 @@ declare type TypedRequest<ReqParam = {}, ReqBody = {}, QueryParams = {}> = {
 declare type TypedResponse<ResBody = any> = ResBody;
 
 // POST /api/users/signup
+declare type GetUsersRequestBody = {};
+declare type GetUsersRequest = TypedRequest<{}, GetUsersRequestBody, {}>;
+declare type GetUsersResponseBody = { users?: Array<IUser> };
+declare type GetUsersResponse = TypedResponse<GetUsersResponseBody>;
+
+// POST /api/users/signup
 declare type PostSignupRequestBody = { userName: string; password: string };
 declare type PostSignupRequest = TypedRequest<{}, PostSignupRequestBody, {}>;
 declare type PostSignupResponseBody = { loggedIn: boolean; user?: IUser };

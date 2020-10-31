@@ -6,11 +6,21 @@ import crypto from 'crypto';
 import { wrapExpressPromise, assertFound } from '../util';
 import { User } from '../entity/User';
 import { ServiceError } from '../error/service-error';
+import { loggedInMiddleware } from './middleware/logged-in-middleware';
 
 const logger = pino();
 
 // Hosted at /api/users
 const usersRoutes = express.Router();
+
+usersRoutes.get(
+  '/',
+  loggedInMiddleware,
+  wrapExpressPromise<GetUsersRequest, GetUsersResponse>(async (req, res) => {
+    const users = (await User.find()).map(mapUser);
+    return { users: users };
+  })
+);
 
 usersRoutes.post(
   '/signup',
