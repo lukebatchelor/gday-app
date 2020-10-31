@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "module": "esnext",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "baseUrl": "."
+  },
+  "include": ["client/src/**/*.{ts,tsx}", "server/**/*.ts"]
+}
