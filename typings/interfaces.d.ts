@@ -9,6 +9,17 @@ declare global {
     status?: string;
     isAdmin: boolean;
   }
+
+  interface IConversation {
+    id: string;
+    lastMessage?: IMessage;
+  }
+
+  interface IMessage {
+    sendingUser: string;
+    content: string;
+    timestamp: number;
+  }
 }
 
 export type ExpressRequestUser = IUser;

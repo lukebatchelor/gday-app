@@ -31,10 +31,11 @@ async function main() {
       await runStartupTasks();
     });
   } catch (error) {
-    logger.error('Uncaught error: ', error);
+    console.log(error);
+    logger.error(error, 'Uncaught error');
   }
 }
 
 main().catch((error: any) => {
-  logger.error('Fatal error occured: ', error);
+  logger.error(error, 'Fatal error occured');
 });

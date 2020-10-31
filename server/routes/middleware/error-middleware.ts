@@ -5,7 +5,7 @@ import pino from 'pino';
 const logger = pino();
 
 function errorMiddleware(error: Error, req: Express.Request, res: express.Response, next: any) {
-  logger.error('Hit error-middleware %o', { message: error.message, stack: error.stack });
+  logger.error(error, 'Returning error from error-middleware');
   if (error instanceof ServiceError) {
     res.status(error.statusCode || 500);
     res.json({ error: error.message });
