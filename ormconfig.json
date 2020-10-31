@@ -1,0 +1,10 @@
+{
+  "type": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "username": "gday",
+  "password": "gday",
+  "database": "gday",
+  "entities": ["src/server/entity/*.ts"],
+  "migrations": ["src/server/migration/*.ts"]
+}
