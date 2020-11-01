@@ -35,7 +35,6 @@ export function HomePage(props: HomeProps) {
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const onComposeClicked = () => {
-    console.log('compose');
     setIsComposing(true);
     setCurMobileView('Conversation');
   };

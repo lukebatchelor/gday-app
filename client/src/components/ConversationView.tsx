@@ -14,7 +14,6 @@ import PersonIcon from '@material-ui/icons/Person';
 import CreateIcon from '@material-ui/icons/Create';
 import SearchIcon from '@material-ui/icons/Search';
 import { useForm, Controller } from 'react-hook-form';
-import ChipInput from 'material-ui-chip-input';
 import { Compose } from './Compose';
 const useStyles = makeStyles((theme) => ({
   composeButton: {

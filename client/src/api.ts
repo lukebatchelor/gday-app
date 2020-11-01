@@ -90,3 +90,7 @@ export async function createUser(userObj: PostSignupRequestBody) {
   const body = userObj;
   return postRequest<PostSignupRequestBody, PostSignupResponseBody>('/api/users/signup', body);
 }
+
+export async function getAllUsers() {
+  return getRequest<GetUsersResponseBody>('/api/users');
+}

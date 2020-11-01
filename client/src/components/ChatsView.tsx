@@ -47,7 +47,13 @@ export function ChatsView(props: ChatsViewProps) {
   return (
     <Box>
       {/* <Box className={classes.spacer} /> */}
-      <Box p={2} overflow="scroll" width={isMobile ? 'auto' : '35vw'} borderRight={isMobile ? '0px' : '2px solid #eee'}>
+      <Box
+        p={2}
+        overflow="scroll"
+        width={isMobile ? 'auto' : '35vw'}
+        height="calc(100vh - 64px)"
+        borderRight={isMobile ? '0px' : '2px solid #eee'}
+      >
         <form noValidate onSubmit={handleSubmit(onSearchSubmit)}>
           <Controller
             control={control}

@@ -5,7 +5,7 @@ declare type TypedRequest<ReqParam = {}, ReqBody = {}, QueryParams = {}> = {
 };
 declare type TypedResponse<ResBody = any> = ResBody;
 
-// POST /api/users/signup
+// GET /api/users
 declare type GetUsersRequestBody = {};
 declare type GetUsersRequest = TypedRequest<{}, GetUsersRequestBody, {}>;
 declare type GetUsersResponseBody = { users?: Array<IUser> };
