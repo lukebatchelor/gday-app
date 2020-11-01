@@ -53,6 +53,17 @@ declare type AddUsersToConversationRequest = TypedRequest<
 declare type AddUsersToConversationResponseBody = { conversation: IConversation };
 declare type AddUsersToConversationResponse = TypedResponse<AddUsersToConversationResponseBody>;
 
+// POST /api/conversations/:id/details
+declare type UpdateConversationDetailsRequestBody = { name?: string; avatarUrl?: string };
+declare type UpdateConversationDetailsRequestParams = { id: string };
+declare type UpdateConversationDetailsRequest = TypedRequest<
+  UpdateConversationDetailsRequestParams,
+  UpdateConversationDetailsRequestBody,
+  {}
+>;
+declare type UpdateConversationDetailsResponseBody = { conversation: IConversation };
+declare type UpdateConversationDetailsResponse = TypedResponse<UpdateConversationDetailsResponseBody>;
+
 // GET /api/conversions
 declare type GetConversationsRequestBody = {};
 declare type GetConversationsRequest = TypedRequest<{}, GetConversationsRequestBody, { users: string }>;

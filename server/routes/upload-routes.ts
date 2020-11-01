@@ -30,7 +30,8 @@ uploadRoutes.post(
   loggedInMiddleware,
   multer({ storage }).single('file'),
   wrapExpressPromise<UploadFileToConversationRequest, UploadFileToConversationResponse>(async (req, res) => {
-    return { location: `/media/conversation/:id/${req.file.filename}` };
+    const { conversationId } = req.params;
+    return { location: `/media/conversation/${conversationId}/${req.file.filename}` };
   })
 );
 

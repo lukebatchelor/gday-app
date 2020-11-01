@@ -148,6 +148,38 @@ conversationRoutes.get(
   })
 );
 
+conversationRoutes.post(
+  '/:id/details',
+  loggedInMiddleware,
+  wrapExpressPromise<UpdateConversationDetailsRequest, UpdateConversationDetailsResponse>(async (req, res) => {
+    const { id: conversationId } = req.params;
+    const { userId } = req.session;
+    const { name, avatarUrl } = req.body;
+    const participant = await Participant.findOne({ conversation: conversationId, user: userId });
+    if (!participant) {
+      throw new ServiceError(`User ${userId} not in conversation ${conversationId}`, 403);
+    }
+    const conversation = await Conversation.findOne({ id: conversationId });
+    const lastMessage = await getMessage(conversation.lastMessage);
+    if (name) {
+      conversation.name = name;
+    }
+    if (avatarUrl) {
+      conversation.avatarUrl = avatarUrl;
+    }
+    await conversation.save();
+
+    return { conversation: mapConversation(conversation, lastMessage) };
+  })
+);
+
+async function getMessage(messageId?: number) {
+  if (!messageId) {
+    return null;
+  }
+  return await Message.findOne({ id: messageId });
+}
+
 async function getUsers(userIds: Array<string>) {
   const foundUsers = await User.find({ id: In(userIds) });
   const missingUsers = difference(
