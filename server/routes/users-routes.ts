@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import multer from 'multer';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { In } from 'typeorm';
 
 import { wrapExpressPromise, assertFound } from '../util';
 import { User } from '../entity/User';
@@ -24,8 +25,13 @@ usersRoutes.get(
   '/',
   loggedInMiddleware,
   wrapExpressPromise<GetUsersRequest, GetUsersResponse>(async (req, res) => {
-    const users = (await User.find()).map(mapUser);
-    return { users: users };
+    let users;
+    if (!req.query.users) {
+      users = await User.find();
+    } else {
+      users = await User.find({ id: In(req.query.users.split(',')) });
+    }
+    return { users: users.map(mapUser) };
   })
 );
 

@@ -7,7 +7,8 @@ declare type TypedResponse<ResBody = any> = ResBody;
 
 // GET /api/users
 declare type GetUsersRequestBody = {};
-declare type GetUsersRequest = TypedRequest<{}, GetUsersRequestBody, {}>;
+declare type GetUsersRequestQueryParams = { users?: string };
+declare type GetUsersRequest = TypedRequest<{}, GetUsersRequestBody, GetUsersRequestQueryParams>;
 declare type GetUsersResponseBody = { users?: Array<IUser> };
 declare type GetUsersResponse = TypedResponse<GetUsersResponseBody>;
 
