@@ -29,13 +29,13 @@ declare type GetAuthenticatedRequest = TypedRequest<{}, GetAuthenticatedRequestB
 declare type GetAuthenticatedResponseBody = { loggedIn: boolean; user?: IUser };
 declare type GetAuthenticatedResponse = TypedResponse<GetAuthenticatedResponseBody>;
 
-// POST /api/conversions
+// POST /api/conversations
 declare type CreateConversationRequestBody = { users: Array<string> };
 declare type CreateConversationRequest = TypedRequest<{}, CreateConversationRequestBody, {}>;
 declare type CreateConversationResponseBody = { conversation: IConversation };
 declare type CreateConversationResponse = TypedResponse<CreateConversationResponseBody>;
 
-// POST /api/conversions/:id
+// POST /api/conversations/:id
 declare type AddUsersToConversationRequestBody = { users: Array<string> };
 declare type AddUsersToConversationRequestParams = { id: string };
 declare type AddUsersToConversationRequest = TypedRequest<

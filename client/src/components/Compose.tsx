@@ -9,13 +9,15 @@ const useStyles = makeStyles((theme) => ({}));
 type FormValues = { users: Array<string> };
 const defaultValues: FormValues = { users: [] };
 
-type ComposeProps = any;
+type ComposeProps = {
+  onComposeUserChange: (newUsers: Array<IUser>) => void;
+};
 export function Compose(props: ComposeProps) {
   const classes = useStyles();
+  const { onComposeUserChange } = props;
 
   const [allUsers, setAllUsers] = useState<Array<IUser>>([]);
   const { handleSubmit, control, watch } = useForm<FormValues>({ defaultValues });
-  const users = watch('users');
 
   const onComposeSubmit = (data: FormValues) => {
     console.log('Compose submit', data);
@@ -24,7 +26,6 @@ export function Compose(props: ComposeProps) {
   useEffect(() => {
     (async () => {
       const allUsers = await getAllUsers();
-      console.log(allUsers);
       setAllUsers(allUsers.users);
     })();
   }, []);
@@ -43,7 +44,10 @@ export function Compose(props: ComposeProps) {
             filterSelectedOptions={true}
             limitTags={2}
             value={value}
-            onChange={(e: React.ChangeEvent, newUsers) => onChange(newUsers)}
+            onChange={(e: React.ChangeEvent, newUsers) => {
+              onChange(newUsers);
+              onComposeUserChange(newUsers);
+            }}
             renderOption={(option: IUser) => (
               <Box display="flex" alignItems="center">
                 <Avatar src={option.avatarUrl}></Avatar>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   AppBar,
   Avatar,
@@ -15,6 +15,8 @@ import CreateIcon from '@material-ui/icons/Create';
 import SearchIcon from '@material-ui/icons/Search';
 import { useForm, Controller } from 'react-hook-form';
 import { Compose } from './Compose';
+import { createConversation } from '../api';
+import { useNavigate } from '@reach/router';
 const useStyles = makeStyles((theme) => ({
   composeButton: {
     marginLeft: 'auto',
@@ -29,13 +31,26 @@ type ConversationViewProps = {
   isComposing: boolean;
 };
 export function ConversationView(props: ConversationViewProps) {
-  const classes = useStyles();
   const { isComposing } = props;
+  const classes = useStyles();
+  const navigate = useNavigate();
+  const composeUsersRef = useRef<Array<IUser>>([]);
 
   const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
 
-  const onChatSubmit = (data: FormValues) => {
+  const onChatSubmit = async (data: FormValues) => {
     console.log('chat submit', data);
+    if (isComposing) {
+      const res = await createConversation(composeUsersRef.current);
+      console.log(res);
+      if (res.conversation && res.conversation.id) {
+        navigate(`/${res.conversation.id}`);
+      }
+    } else {
+    }
+  };
+  const onComposeUserChange = (newUsers: Array<IUser>) => {
+    composeUsersRef.current = newUsers;
   };
 
   return (
@@ -43,7 +58,7 @@ export function ConversationView(props: ConversationViewProps) {
       <Box flexGrow={1}>
         {isComposing && (
           <Box>
-            <Compose />
+            <Compose onComposeUserChange={onComposeUserChange} />
           </Box>
         )}
         {!isComposing && <Box>Messages go here</Box>}
