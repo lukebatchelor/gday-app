@@ -91,7 +91,7 @@ conversationRoutes.get(
     // Filter conversations to only ones containing set of users if query param passed in
     if (req.query.users) {
       const { users } = req.query;
-      // users to filter on is all users passed in plus plogged in user comma seperated in alphabetical order
+      // Users to filter on is all users passed in plus plogged in user comma seperated in alphabetical order
       const userListToFilterOn = [...users.split(','), userId].sort().join(',');
       const allConversationIds = conversationsParticipatedIn.map((c) => c.conversation);
       conversationsParticipatedIn = await Participant.createQueryBuilder()

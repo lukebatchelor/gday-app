@@ -11,7 +11,9 @@ function wrapExpressPromise<RequestType extends TypedRequest, ResponseType>(
    * the express core.Request so the any they set doesn't override our types.
    */
   fn: (
-    req: RequestType & Express.Request & Omit<core.Request<core.ParamsDictionary, {}, {}>, 'query'>,
+    req: RequestType &
+      Express.Request &
+      Omit<core.Request<core.ParamsDictionary, {}, {}> & { file: Express.Multer.File }, 'query'>,
     res: express.Response
   ) => Promise<ResponseType>
 ) {

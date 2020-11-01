@@ -29,7 +29,14 @@ declare type GetAuthenticatedRequest = TypedRequest<{}, GetAuthenticatedRequestB
 declare type GetAuthenticatedResponseBody = { loggedIn: boolean; user?: IUser };
 declare type GetAuthenticatedResponse = TypedResponse<GetAuthenticatedResponseBody>;
 
-// POST /api/conversations
+// POST /api/user/:id/avatar
+declare type UploadAvatarRequestBody = {};
+declare type UploadAvatarRequestParams = { id: string };
+declare type UploadAvatarRequest = TypedRequest<{}, UploadAvatarRequestBody, {}>;
+declare type UploadAvatarResponseBody = { location: string };
+declare type UploadAvatarResponse = TypedResponse<UploadAvatarResponseBody>;
+
+// POST /api/conversions
 declare type CreateConversationRequestBody = { users: Array<string> };
 declare type CreateConversationRequest = TypedRequest<{}, CreateConversationRequestBody, {}>;
 declare type CreateConversationResponseBody = { conversation: IConversation };
@@ -64,3 +71,10 @@ declare type GetMessagesForConversationRequestParams = { id: string };
 declare type GetMessagesForConversationRequest = TypedRequest<GetMessagesForConversationRequestParams, {}, {}>;
 declare type GetMessagesForConversationResponseBody = { messages: Array<IMessage> };
 declare type GetMessagesForConversationResponse = TypedResponse<GetMessagesForConversationResponseBody>;
+
+// POST /api/uploads/:conversationId
+declare type UploadFileToConversationRequestBody = {};
+declare type UploadFileToConversationRequestParams = { conversationId: string };
+declare type UploadFileToConversationRequest = TypedRequest<{}, UploadFileToConversationRequestBody, {}>;
+declare type UploadFileToConversationResponseBody = { location: string };
+declare type UploadFileToConversationResponse = TypedResponse<UploadFileToConversationResponseBody>;
