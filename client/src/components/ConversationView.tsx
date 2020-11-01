@@ -55,7 +55,6 @@ export function ConversationView(props: ConversationViewProps) {
     });
     return map;
   }, [allUsers]);
-  console.log('userMap', userMap);
 
   const onChatSubmit = async (data: FormValues) => {
     console.log('chat submit', data);

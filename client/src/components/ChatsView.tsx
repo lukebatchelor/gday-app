@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   AppBar,
   Avatar,
@@ -13,7 +13,7 @@ import {
 
 import SearchIcon from '@material-ui/icons/Search';
 import { Controller, useForm } from 'react-hook-form';
-import { getConversations } from '../api';
+import { getAllUsers, getConversations } from '../api';
 import { useStateIfMounted } from 'use-state-if-mounted';
 import { Link } from '@reach/router';
 
@@ -42,6 +42,15 @@ export function ChatsView(props: ChatsViewProps) {
   const classes = useStyles();
   const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
   const [conversations, setConversations] = useStateIfMounted<Array<IConversation>>([]);
+  const [allUsers, setAllUsers] = useStateIfMounted<Array<IUser>>([]);
+  const userMap = useMemo(() => {
+    const map: Record<string, IUser> = {};
+    allUsers.forEach((user) => {
+      map[user.id] = user;
+    });
+    return map;
+  }, [allUsers]);
+
   const onSearchSubmit = (data: FormValues) => {
     const { search } = data;
     console.log('Searched for: ', search);
@@ -50,6 +59,12 @@ export function ChatsView(props: ChatsViewProps) {
   useEffect(() => {
     getConversations().then((res) => {
       setConversations(res.conversations);
+    });
+  }, []);
+
+  useEffect(() => {
+    getAllUsers().then((res) => {
+      setAllUsers(res.users);
     });
   }, []);
 
@@ -98,18 +113,25 @@ export function ChatsView(props: ChatsViewProps) {
               <Box ml={2} display="flex" flexDirection="column" style={{ flex: '1', minWidth: 0 }}>
                 <Typography>{c.name}</Typography>
                 <Box display="flex">
-                  <Typography className={classes.messageText}>
-                    {!c.lastMessage ? 'None ' : c.lastMessage.sendingUser}:{' '}
-                    {!c.lastMessage ? 'None ' : c.lastMessage.content}
-                  </Typography>
-                  <Typography className={classes.messageTimeStamp}>
-                    {!c.lastMessage
-                      ? '?? '
-                      : new Date(c.lastMessage.timestamp).toLocaleTimeString('en-GB', {
-                          hour: 'numeric',
-                          minute: 'numeric',
-                        })}
-                  </Typography>
+                  {c.lastMessage && (
+                    <>
+                      <Typography className={classes.messageText}>
+                        {!c.lastMessage
+                          ? 'None '
+                          : userMap[c.lastMessage.sendingUser] && userMap[c.lastMessage.sendingUser].displayName}
+                        : {!c.lastMessage ? 'None ' : c.lastMessage.content}
+                      </Typography>
+                      <Typography className={classes.messageTimeStamp}>
+                        {!c.lastMessage
+                          ? '?? '
+                          : new Date(c.lastMessage.timestamp).toLocaleTimeString('en-GB', {
+                              hour: 'numeric',
+                              minute: 'numeric',
+                            })}
+                      </Typography>
+                    </>
+                  )}
+                  {!c.lastMessage && <Typography className={classes.messageText}>Empty</Typography>}
                 </Box>
               </Box>
             </Box>
