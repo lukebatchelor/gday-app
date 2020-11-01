@@ -87,7 +87,20 @@ conversationRoutes.get(
   loggedInMiddleware,
   wrapExpressPromise<GetConversationsRequest, GetConversationsResponse>(async (req, res) => {
     const { userId } = req.session;
-    const conversationsParticipatedIn = await Participant.find({ user: userId });
+    let conversationsParticipatedIn = await Participant.find({ user: userId });
+    // Filter conversations to only ones containing set of users if query param passed in
+    if (req.query.users) {
+      const { users } = req.query;
+      // users to filter on is all users passed in plus plogged in user comma seperated in alphabetical order
+      const userListToFilterOn = [...users.split(','), userId].sort().join(',');
+      const allConversationIds = conversationsParticipatedIn.map((c) => c.conversation);
+      conversationsParticipatedIn = await Participant.createQueryBuilder()
+        .select('conversation, group_concat(user order by user asc) as users')
+        .where('conversation IN (:...conversations)', { conversations: allConversationIds })
+        .groupBy('conversation')
+        .having('users = :users', { users: userListToFilterOn })
+        .execute();
+    }
     const conversations = await Conversation.find({ id: In(conversationsParticipatedIn.map((c) => c.conversation)) });
     const messages = await Message.find({ id: In(conversations.map((c) => c.lastMessage)) });
     const conversationToMessage = indexBy(messages, 'conversation');

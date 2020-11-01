@@ -48,7 +48,7 @@ declare type AddUsersToConversationResponse = TypedResponse<AddUsersToConversati
 
 // GET /api/conversions
 declare type GetConversationsRequestBody = {};
-declare type GetConversationsRequest = TypedRequest<{}, GetConversationsRequestBody, {}>;
+declare type GetConversationsRequest = TypedRequest<{}, GetConversationsRequestBody, { users: string }>;
 declare type GetConversationsResponseBody = { conversations: Array<IConversation> };
 declare type GetConversationsResponse = TypedResponse<GetConversationsResponseBody>;
 

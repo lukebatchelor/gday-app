@@ -7,6 +7,7 @@
   "database": "gday",
   "entities": ["server/entity/*.ts"],
   "migrations": ["server/migration/*.ts"],
+  "logging": true,
   "cli": {
     "migrationsDir": "server/migration"
   }
