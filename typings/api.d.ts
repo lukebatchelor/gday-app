@@ -24,7 +24,7 @@ declare type PostLoginRequest = TypedRequest<{}, PostLoginRequestBody, {}>;
 declare type PostLoginResponseBody = { loggedIn: boolean; user?: IUser };
 declare type PostLoginResponse = TypedResponse<PostLoginResponseBody>;
 
-// POST /api/users/authenticated
+// GET /api/users/authenticated
 declare type GetAuthenticatedRequestBody = {};
 declare type GetAuthenticatedRequest = TypedRequest<{}, GetAuthenticatedRequestBody, {}>;
 declare type GetAuthenticatedResponseBody = { loggedIn: boolean; user?: IUser };
@@ -71,14 +71,14 @@ declare type GetConversationsRequest = TypedRequest<{}, GetConversationsRequestB
 declare type GetConversationsResponseBody = { conversations: Array<IConversation> };
 declare type GetConversationsResponse = TypedResponse<GetConversationsResponseBody>;
 
-// POST /api/conversions/:id/sendmessage
+// POST /api/conversations/:id/sendmessage
 declare type SendMessageToConversationRequestBody = { content: string };
 declare type SendMessageToConversationRequestParams = { id: string };
 declare type SendMessageToConversationRequest = TypedRequest<{}, SendMessageToConversationRequestBody, {}>;
 declare type SendMessageToConversationResponseBody = { conversation: IConversation };
 declare type SendMessageToConversationResponse = TypedResponse<SendMessageToConversationResponseBody>;
 
-// GET /api/conversions/:id/messages
+// GET /api/conversations/:id/messages
 declare type GetMessagesForConversationRequestParams = { id: string };
 declare type GetMessagesForConversationRequest = TypedRequest<GetMessagesForConversationRequestParams, {}, {}>;
 declare type GetMessagesForConversationResponseBody = { messages: Array<IMessage> };

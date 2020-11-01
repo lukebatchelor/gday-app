@@ -48,7 +48,8 @@
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.28",
     "underscore": "^1.11.0",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "use-state-if-mounted": "^1.0.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

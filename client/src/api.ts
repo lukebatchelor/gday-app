@@ -74,16 +74,7 @@ export async function logout() {
 }
 
 export async function checkLoggedIn() {
-  return {
-    user: {
-      userName: 'foo',
-      displayName: 'foo',
-      isAdmin: true,
-      id: '1',
-    },
-    loggedIn: true,
-  };
-  // return getRequest<any>('/api/users/authenticated');
+  return getRequest<GetAuthenticatedResponseBody>('/api/users/authenticated');
 }
 
 export async function createUser(userObj: PostSignupRequestBody) {
@@ -101,7 +92,7 @@ export async function createConversation(users: Array<IUser>) {
 }
 
 export async function getMessages(conversationId: string) {
-  return getRequest<GetMessagesForConversationResponseBody>(`/api/conversions/${conversationId}/messages`);
+  return getRequest<GetMessagesForConversationResponseBody>(`/api/conversations/${conversationId}/messages`);
 }
 
 export async function sendMessage(conversationId: string, content: string) {

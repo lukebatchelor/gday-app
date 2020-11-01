@@ -11,24 +11,17 @@ const defaultValues: FormValues = { users: [] };
 
 type ComposeProps = {
   onComposeUserChange: (newUsers: Array<IUser>) => void;
+  allUsers: Array<IUser>;
 };
 export function Compose(props: ComposeProps) {
   const classes = useStyles();
-  const { onComposeUserChange } = props;
+  const { onComposeUserChange, allUsers } = props;
 
-  const [allUsers, setAllUsers] = useState<Array<IUser>>([]);
-  const { handleSubmit, control, watch } = useForm<FormValues>({ defaultValues });
+  const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
 
   const onComposeSubmit = (data: FormValues) => {
     console.log('Compose submit', data);
   };
-
-  useEffect(() => {
-    (async () => {
-      const allUsers = await getAllUsers();
-      setAllUsers(allUsers.users);
-    })();
-  }, []);
 
   return (
     <form noValidate onSubmit={handleSubmit(onComposeSubmit)}>
