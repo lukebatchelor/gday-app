@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import express from 'express';
-import multer from 'multer';
 import pino from 'pino';
 import { In } from 'typeorm';
 import { User } from '../entity/User';

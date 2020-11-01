@@ -92,7 +92,7 @@ export function ChatsView(props: ChatsViewProps) {
         <Box mt={2} display="flex" flexDirection="column">
           {conversations.map((c, i) => (
             <Box key={`${c}-${i}`} display="flex" marginY={1} alignItems="center">
-              <Link to={c.id}>
+              <Link to={`/${c.id}`}>
                 <Avatar src={c.avatarUrl}></Avatar>
               </Link>
               <Box ml={2} display="flex" flexDirection="column" style={{ flex: '1', minWidth: 0 }}>
