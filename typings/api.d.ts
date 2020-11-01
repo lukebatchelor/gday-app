@@ -73,7 +73,7 @@ declare type UpdateConversationDetailsRequest = TypedRequest<
 declare type UpdateConversationDetailsResponseBody = { conversation: IConversation };
 declare type UpdateConversationDetailsResponse = TypedResponse<UpdateConversationDetailsResponseBody>;
 
-// GET /api/conversions
+// GET /api/conversations
 declare type GetConversationsRequestBody = {};
 declare type GetConversationsRequest = TypedRequest<{}, GetConversationsRequestBody, { users: string }>;
 declare type GetConversationsResponseBody = { conversations: Array<IConversation> };

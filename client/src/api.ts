@@ -86,6 +86,10 @@ export async function getAllUsers() {
   return getRequest<GetUsersResponseBody>('/api/users');
 }
 
+export async function getConversations() {
+  return getRequest<GetConversationsResponseBody>('/api/conversations');
+}
+
 export async function createConversation(users: Array<IUser>) {
   const body: CreateConversationRequestBody = { users: users.map((user) => user.id) };
   return postRequest<CreateConversationRequestBody, CreateConversationResponseBody>('/api/conversations', body);

@@ -45,7 +45,7 @@ export function ConversationView(props: ConversationViewProps) {
 
   const { handleSubmit, control, watch, setValue } = useForm<FormValues>({ defaultValues });
   const chatContent = watch('chat');
-  const [allUsers, setAllUsers] = useState<Array<IUser>>([]);
+  const [allUsers, setAllUsers] = useStateIfMounted<Array<IUser>>([]);
   const [messages, setMessages] = useStateIfMounted<Array<IMessage>>([]);
   const [lastTimeStamp, setLastTimeStamp] = useState<number>(0);
   const userMap = useMemo(() => {
@@ -81,26 +81,17 @@ export function ConversationView(props: ConversationViewProps) {
   };
 
   useEffect(() => {
-    let isMounted = true;
     if (!isComposing && conversationId) {
       getMessages(conversationId).then((res) => {
-        if (isMounted) setMessages(res.messages);
+        setMessages(res.messages);
       });
     }
-
-    return () => {
-      isMounted = false;
-    };
   }, [isComposing, conversationId, lastTimeStamp]);
 
   useEffect(() => {
-    let mounted = true;
     getAllUsers().then((res) => {
-      if (mounted) setAllUsers(res.users);
+      setAllUsers(res.users);
     });
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   const messageGroups: MessageGroup[] = messages.reduce((groups: MessageGroup[], next: IMessage) => {
