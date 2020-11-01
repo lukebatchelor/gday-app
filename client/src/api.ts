@@ -90,6 +90,10 @@ export async function getConversations() {
   return getRequest<GetConversationsResponseBody>('/api/conversations');
 }
 
+export async function getConversationDetails(conversationId: string) {
+  return getRequest<GetConversationDetailsResponseBody>(`/api/conversations/${conversationId}/details`);
+}
+
 export async function createConversation(users: Array<IUser>) {
   const body: CreateConversationRequestBody = { users: users.map((user) => user.id) };
   return postRequest<CreateConversationRequestBody, CreateConversationResponseBody>('/api/conversations', body);

@@ -1,24 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  AppBar,
-  Avatar,
-  Box,
-  IconButton,
-  InputAdornment,
-  makeStyles,
-  TextField,
-  Toolbar,
-  Typography,
-} from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
-import CreateIcon from '@material-ui/icons/Create';
-import SearchIcon from '@material-ui/icons/Search';
-import { useForm, Controller } from 'react-hook-form';
-import { Compose } from './Compose';
-import { createConversation, getAllUsers, getMessages, sendMessage } from '../api';
+import { Box, makeStyles, TextField } from '@material-ui/core';
 import { useNavigate } from '@reach/router';
-import { ChatBubble } from './ChatBubble';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useStateIfMounted } from 'use-state-if-mounted';
+import { createConversation, getAllUsers, getMessages, sendMessage } from '../api';
+import { ChatBubble } from './ChatBubble';
+import { Compose } from './Compose';
 const useStyles = makeStyles((theme) => ({
   composeButton: {
     marginLeft: 'auto',
@@ -94,7 +81,6 @@ export function ConversationView(props: ConversationViewProps) {
   }, []);
 
   const messageGroups: MessageGroup[] = messages.reduce((groups: MessageGroup[], next: IMessage) => {
-    console.log({ groups, next });
     const nextAuthor = userMap[next.sendingUser];
     if (!nextAuthor) return groups;
     if (groups.length === 0) return [{ author: nextAuthor, messages: [next] }];

@@ -79,6 +79,12 @@ declare type GetConversationsRequest = TypedRequest<{}, GetConversationsRequestB
 declare type GetConversationsResponseBody = { conversations: Array<IConversation> };
 declare type GetConversationsResponse = TypedResponse<GetConversationsResponseBody>;
 
+// GET /api/conversations:/conversationId/details
+declare type GetConversationDetailsRequestParams = { conversationId: string };
+declare type GetConversationDetailsRequest = TypedRequest<GetConversationDetailsRequestParams, {}, {}>;
+declare type GetConversationDetailsResponseBody = { conversation: IConversation };
+declare type GetConversationDetailsResponse = TypedResponse<GetConversationDetailsResponseBody>;
+
 // POST /api/conversations/:id/sendmessage
 declare type SendMessageToConversationRequestBody = { content: string };
 declare type SendMessageToConversationRequestParams = { id: string };

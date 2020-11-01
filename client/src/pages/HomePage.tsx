@@ -50,7 +50,12 @@ export function HomePage(props: HomeProps) {
   return (
     <Box>
       <CssBaseline />
-      <AppHeader isMobile={isMobile} isComposing={isComposing} onCompose={onComposeClicked} chatName="Group chat" />
+      <AppHeader
+        isMobile={isMobile}
+        isComposing={isComposing}
+        onCompose={onComposeClicked}
+        selectedConversationId={conversationId}
+      />
       <Box className={classes.spacer} />
       <Box display="flex" flexDirection={isMobile ? 'column' : 'row'} height="calc(100vh - 64px)">
         {!isMobile || (curMobileView === 'Chats' && !conversationId) ? <ChatsView isMobile={isMobile} /> : null}

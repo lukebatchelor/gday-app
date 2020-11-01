@@ -1,21 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
-import {
-  AppBar,
-  Avatar,
-  Box,
-  IconButton,
-  InputAdornment,
-  makeStyles,
-  TextField,
-  Toolbar,
-  Typography,
-} from '@material-ui/core';
-
+import { Avatar, Box, InputAdornment, makeStyles, TextField, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import { Controller, useForm } from 'react-hook-form';
-import { getAllUsers, getConversations } from '../api';
-import { useStateIfMounted } from 'use-state-if-mounted';
 import { Link } from '@reach/router';
+import React, { useEffect, useMemo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useStateIfMounted } from 'use-state-if-mounted';
+import { getAllUsers, getConversations } from '../api';
 
 const useStyles = makeStyles((theme) => ({
   messageText: {
