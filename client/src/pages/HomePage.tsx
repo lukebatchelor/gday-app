@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Avatar,
@@ -24,20 +24,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type HomeProps = RouteComponentProps;
+type HomeProps = RouteComponentProps & { conversationId?: string };
 export function HomePage(props: HomeProps) {
+  const { conversationId } = props;
   const classes = useStyles();
   const theme = useTheme();
 
   // Current view we are in (only for mobile)
   const [curMobileView, setCurMobileView] = useState<MobileView>('Chats');
   const [isComposing, setIsComposing] = useState<boolean>(false);
-
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const onComposeClicked = () => {
     setIsComposing(true);
     setCurMobileView('Conversation');
   };
+
+  useEffect(() => {
+    (async () => {
+      if (isMobile && conversationId) {
+        setCurMobileView('Conversation');
+      }
+    })();
+  }, [isMobile, conversationId]);
 
   return (
     <Box>
@@ -45,9 +53,9 @@ export function HomePage(props: HomeProps) {
       <AppHeader isMobile={isMobile} isComposing={isComposing} onCompose={onComposeClicked} chatName="Group chat" />
       <Box className={classes.spacer} />
       <Box display="flex" flexDirection={isMobile ? 'column' : 'row'} height="calc(100vh - 64px)">
-        {!isMobile || curMobileView === 'Chats' ? <ChatsView isMobile={isMobile} /> : null}
+        {!isMobile || (curMobileView === 'Chats' && !conversationId) ? <ChatsView isMobile={isMobile} /> : null}
         {!isMobile || curMobileView === 'Conversation' ? (
-          <ConversationView isMobile={isMobile} isComposing={isComposing} />
+          <ConversationView isMobile={isMobile} isComposing={isComposing} conversationId={conversationId} />
         ) : null}
       </Box>
     </Box>

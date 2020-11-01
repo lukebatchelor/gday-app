@@ -35,6 +35,7 @@ export function App(props: AppProps) {
       <Router basepath={appContext.basePathPrefix}>
         <SignInPage path="/sign-in" />
         <SignUpPage path="/sign-up" />
+        <HomePage path="/:conversationId" />
         <HomePage default path="/" />
       </Router>
     </ThemeProvider>

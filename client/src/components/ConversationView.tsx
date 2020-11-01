@@ -15,7 +15,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import SearchIcon from '@material-ui/icons/Search';
 import { useForm, Controller } from 'react-hook-form';
 import { Compose } from './Compose';
-import { createConversation } from '../api';
+import { createConversation, sendMessage } from '../api';
 import { useNavigate } from '@reach/router';
 const useStyles = makeStyles((theme) => ({
   composeButton: {
@@ -29,14 +29,16 @@ const defaultValues: FormValues = { chat: '' };
 type ConversationViewProps = {
   isMobile: boolean;
   isComposing: boolean;
+  conversationId?: string;
 };
 export function ConversationView(props: ConversationViewProps) {
-  const { isComposing } = props;
+  const { isComposing, conversationId } = props;
   const classes = useStyles();
   const navigate = useNavigate();
   const composeUsersRef = useRef<Array<IUser>>([]);
 
-  const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
+  const { handleSubmit, control, watch } = useForm<FormValues>({ defaultValues });
+  const chatContent = watch('chat');
 
   const onChatSubmit = async (data: FormValues) => {
     console.log('chat submit', data);
@@ -47,6 +49,10 @@ export function ConversationView(props: ConversationViewProps) {
         navigate(`/${res.conversation.id}`);
       }
     } else {
+      if (conversationId && chatContent) {
+        const res = await sendMessage(conversationId, chatContent);
+        console.log(res);
+      }
     }
   };
   const onComposeUserChange = (newUsers: Array<IUser>) => {

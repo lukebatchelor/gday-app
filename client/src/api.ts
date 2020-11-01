@@ -99,3 +99,15 @@ export async function createConversation(users: Array<IUser>) {
   const body: CreateConversationRequestBody = { users: users.map((user) => user.id) };
   return postRequest<CreateConversationRequestBody, CreateConversationResponseBody>('/api/conversations', body);
 }
+
+export async function getMessages(conversationId: string) {
+  return getRequest<GetMessagesForConversationResponseBody>(`/api/conversions/${conversationId}/messages`);
+}
+
+export async function sendMessage(conversationId: string, content: string) {
+  const body: SendMessageToConversationRequestBody = { content };
+  return postRequest<SendMessageToConversationRequestBody, SendMessageToConversationResponseBody>(
+    `/api/conversations/${conversationId}/sendmessage`,
+    body
+  );
+}
