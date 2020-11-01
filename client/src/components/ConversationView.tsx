@@ -25,6 +25,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+type MessageGroup = {
+  author: IUser;
+  messages: Array<IMessage>;
+};
 type FormValues = { chat: string };
 const defaultValues: FormValues = { chat: '' };
 
@@ -99,6 +103,19 @@ export function ConversationView(props: ConversationViewProps) {
     };
   }, []);
 
+  const messageGroups: MessageGroup[] = messages.reduce((groups: MessageGroup[], next: IMessage) => {
+    console.log({ groups, next });
+    const nextAuthor = userMap[next.sendingUser];
+    if (!nextAuthor) return groups;
+    if (groups.length === 0) return [{ author: nextAuthor, messages: [next] }];
+    if (next.sendingUser === groups[groups.length - 1].author.id) {
+      groups[groups.length - 1].messages.push(next);
+      return groups;
+    }
+    groups.push({ author: userMap[next.sendingUser], messages: [next] });
+    return groups;
+  }, []);
+
   return (
     <Box flexGrow={1} display="flex" flexDirection="column" p={2}>
       <Box flexGrow={1}>
@@ -109,13 +126,8 @@ export function ConversationView(props: ConversationViewProps) {
         )}
         {!isComposing && (
           <Box display="flex" flexDirection="column">
-            {messages.map((message: IMessage, idx: number) => (
-              <ChatBubble
-                key={`message-${idx}`}
-                message={message}
-                prevAuthor={idx === 0 ? '' : messages[idx - 1].sendingUser}
-                author={userMap[message.sendingUser]}
-              />
+            {messageGroups.map((messageGroup: MessageGroup, idx: number) => (
+              <ChatBubble key={`message-${idx}`} messageGroup={messageGroup} />
             ))}
           </Box>
         )}

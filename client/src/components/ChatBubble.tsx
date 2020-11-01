@@ -1,37 +1,61 @@
 import React, { useContext } from 'react';
-import { Avatar, Box, makeStyles } from '@material-ui/core';
+import { Avatar, Box, makeStyles, Paper, Typography } from '@material-ui/core';
 import { UserContext } from '../contexts/UserContext';
 
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({
+  userMessageBox: {
+    marginTop: theme.spacing(1),
+    padding: `${theme.spacing(0.5)}px ${theme.spacing(1)}px`,
+  },
+  otherMessageBox: {
+    marginTop: theme.spacing(1),
+    padding: `${theme.spacing(0.5)}px ${theme.spacing(1)}px`,
+  },
+}));
 
 type ChatBubbleProps = {
-  message: IMessage;
-  author: IUser;
-  prevAuthor: string;
+  messageGroup: {
+    author: IUser;
+    messages: Array<IMessage>;
+  };
 };
 export function ChatBubble(props: ChatBubbleProps) {
   const classes = useStyles();
-  const { message, author, prevAuthor } = props;
+  const { messageGroup } = props;
   const [user] = useContext(UserContext);
 
-  if (!message || !author) return null;
+  if (!messageGroup || !messageGroup.author) return null;
 
+  const { author, messages } = messageGroup;
   const displayName = author.displayName;
   const avatarUrl = author.avatarUrl;
-  const timeStr = new Date(message.timestamp).toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
-  const { content } = message;
+  // const timeStr = new Date(message.timestamp).toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
 
   if (user.id !== author.id) {
     return (
-      <Box>
-        {!prevAuthor || prevAuthor !== author.id ? <Avatar src={avatarUrl} /> : null}
-        {displayName}: {content} @ {timeStr}
+      <Box display="flex" alignItems="flex-end">
+        <Avatar src={avatarUrl} />
+        <Box mr={2} />
+        <Box>
+          <Typography variant="body1" style={{ marginBottom: '-8px' }}>
+            {displayName}
+          </Typography>
+          {messages.map((message, idx) => (
+            <Paper key={idx} className={classes.userMessageBox}>
+              <Typography>{message.content}</Typography>
+            </Paper>
+          ))}
+        </Box>
       </Box>
     );
   }
   return (
     <Box ml="auto">
-      {displayName}: {content} @ {timeStr}
+      {messages.map((message, idx) => (
+        <Paper key={idx} className={classes.userMessageBox}>
+          <Typography>{message.content}</Typography>
+        </Paper>
+      ))}
     </Box>
   );
 }
