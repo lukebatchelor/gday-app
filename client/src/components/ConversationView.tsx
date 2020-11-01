@@ -14,6 +14,8 @@ import PersonIcon from '@material-ui/icons/Person';
 import CreateIcon from '@material-ui/icons/Create';
 import SearchIcon from '@material-ui/icons/Search';
 import { useForm, Controller } from 'react-hook-form';
+import ChipInput from 'material-ui-chip-input';
+import { Compose } from './Compose';
 const useStyles = makeStyles((theme) => ({
   composeButton: {
     marginLeft: 'auto',
@@ -21,13 +23,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type FormValues = { chat: string };
-const defaultValues = { chat: '' };
+const defaultValues: FormValues = { chat: '' };
 
 type ConversationViewProps = {
   isMobile: boolean;
+  isComposing: boolean;
 };
 export function ConversationView(props: ConversationViewProps) {
   const classes = useStyles();
+  const { isComposing } = props;
 
   const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
 
@@ -37,7 +41,14 @@ export function ConversationView(props: ConversationViewProps) {
 
   return (
     <Box flexGrow={1} display="flex" flexDirection="column" p={2}>
-      <Box flexGrow={1}></Box>
+      <Box flexGrow={1}>
+        {isComposing && (
+          <Box>
+            <Compose />
+          </Box>
+        )}
+        {!isComposing && <Box>Messages go here</Box>}
+      </Box>
       <Box>
         <form noValidate onSubmit={handleSubmit(onChatSubmit)}>
           <Controller

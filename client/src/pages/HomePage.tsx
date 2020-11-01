@@ -16,6 +16,7 @@ import { RouteComponentProps } from '@reach/router';
 import { ChatsView } from '../components/ChatsView';
 import { ConversationView } from '../components/ConversationView';
 import { AppHeader } from '../components/AppHeader';
+import type { MobileView } from '../types';
 
 const useStyles = makeStyles((theme) => ({
   spacer: {
@@ -23,36 +24,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type View = 'Chats' | 'Conversation';
-
 type HomeProps = RouteComponentProps;
 export function HomePage(props: HomeProps) {
   const classes = useStyles();
   const theme = useTheme();
 
-  const [curView, setCurView] = useState<View>('Chats');
+  // Current view we are in (only for mobile)
+  const [curMobileView, setCurMobileView] = useState<MobileView>('Chats');
+  const [isComposing, setIsComposing] = useState<boolean>(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  if (isMobile) {
-    return (
-      <Box>
-        <CssBaseline />
-        <AppHeader isMobile={true} />
-        <Box className={classes.spacer} />
-        <ChatsView isMobile={true} />
-      </Box>
-    );
-  }
+  const onComposeClicked = () => {
+    console.log('compose');
+    setIsComposing(true);
+    setCurMobileView('Conversation');
+  };
 
   return (
     <Box>
       <CssBaseline />
-      <AppHeader isMobile={false} />
+      <AppHeader isMobile={isMobile} isComposing={isComposing} onCompose={onComposeClicked} chatName="Group chat" />
       <Box className={classes.spacer} />
-      <Box display="flex">
-        <ChatsView isMobile={false} />
-        <ConversationView isMobile={false} />
+      <Box display="flex" flexDirection={isMobile ? 'column' : 'row'} height="calc(100vh - 64px)">
+        {!isMobile || curMobileView === 'Chats' ? <ChatsView isMobile={isMobile} /> : null}
+        {!isMobile || curMobileView === 'Conversation' ? (
+          <ConversationView isMobile={isMobile} isComposing={isComposing} />
+        ) : null}
       </Box>
     </Box>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { AppBar, Avatar, Box, IconButton, makeStyles, Toolbar, Typography } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import CreateIcon from '@material-ui/icons/Create';
+import { MobileView } from '../types';
 
 const useStyles = makeStyles((theme) => ({
   composeButton: {
@@ -14,10 +15,13 @@ const useStyles = makeStyles((theme) => ({
 
 type AppHeaderProps = {
   isMobile: boolean;
+  onCompose: () => void;
+  isComposing: boolean;
+  chatName: string;
 };
 export function AppHeader(props: AppHeaderProps) {
   const classes = useStyles();
-  const { isMobile } = props;
+  const { isMobile, onCompose, isComposing, chatName } = props;
 
   return (
     <AppBar style={{ flexDirection: isMobile ? 'column' : 'row' }}>
@@ -30,7 +34,7 @@ export function AppHeader(props: AppHeaderProps) {
           <Typography variant="h5">Chats</Typography>
           <IconButton
             aria-label="Compose new message"
-            // onClick={() => {}}
+            onClick={onCompose}
             color="inherit"
             size="small"
             className={classes.composeButton}
@@ -44,6 +48,8 @@ export function AppHeader(props: AppHeaderProps) {
           <Avatar>
             <PersonIcon />
           </Avatar>
+          <Box mr={2} />
+          <Typography variant="h5">{isComposing ? 'Create new chat' : chatName}</Typography>
         </Toolbar>
       )}
     </AppBar>
