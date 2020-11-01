@@ -5,6 +5,10 @@ declare type TypedRequest<ReqParam = {}, ReqBody = {}, QueryParams = {}> = {
 };
 declare type TypedResponse<ResBody = any> = ResBody;
 
+/**
+ * User
+ */
+
 // GET /api/users
 declare type GetUsersRequestBody = {};
 declare type GetUsersRequestQueryParams = { users?: string };
@@ -30,12 +34,16 @@ declare type GetAuthenticatedRequest = TypedRequest<{}, GetAuthenticatedRequestB
 declare type GetAuthenticatedResponseBody = { loggedIn: boolean; user?: IUser };
 declare type GetAuthenticatedResponse = TypedResponse<GetAuthenticatedResponseBody>;
 
-// POST /api/user/:id/avatar
-declare type UploadAvatarRequestBody = {};
-declare type UploadAvatarRequestParams = { id: string };
-declare type UploadAvatarRequest = TypedRequest<{}, UploadAvatarRequestBody, {}>;
-declare type UploadAvatarResponseBody = { location: string };
-declare type UploadAvatarResponse = TypedResponse<UploadAvatarResponseBody>;
+// POST /api/user/:userId/details
+declare type UpdateUserDetailsRequestBody = { displayName?: string; avatarUrl?: string };
+declare type UpdateUserDetailsRequestParams = { userId: string };
+declare type UpdateUserDetailsRequest = TypedRequest<UpdateUserDetailsRequestParams, UpdateUserDetailsRequestBody, {}>;
+declare type UpdateUserDetailsResponseBody = { user: IUser };
+declare type UpdateUserDetailsResponse = TypedResponse<UpdateUserDetailsResponseBody>;
+
+/**
+ * Conversation
+ */
 
 // POST /api/conversions
 declare type CreateConversationRequestBody = { users: Array<string> };
@@ -84,9 +92,20 @@ declare type GetMessagesForConversationRequest = TypedRequest<GetMessagesForConv
 declare type GetMessagesForConversationResponseBody = { messages: Array<IMessage> };
 declare type GetMessagesForConversationResponse = TypedResponse<GetMessagesForConversationResponseBody>;
 
-// POST /api/uploads/:conversationId
+/**
+ * Uploads
+ */
+
+// POST /api/upload/conversations/:conversationId
 declare type UploadFileToConversationRequestBody = {};
 declare type UploadFileToConversationRequestParams = { conversationId: string };
 declare type UploadFileToConversationRequest = TypedRequest<{}, UploadFileToConversationRequestBody, {}>;
 declare type UploadFileToConversationResponseBody = { location: string };
 declare type UploadFileToConversationResponse = TypedResponse<UploadFileToConversationResponseBody>;
+
+// POST /api/upload/users/:userId/avatar
+declare type UploadAvatarRequestBody = {};
+declare type UploadAvatarRequestParams = { userId: string };
+declare type UploadAvatarRequest = TypedRequest<{}, UploadAvatarRequestBody, {}>;
+declare type UploadAvatarResponseBody = { location: string };
+declare type UploadAvatarResponse = TypedResponse<UploadAvatarResponseBody>;

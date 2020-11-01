@@ -1,22 +1,15 @@
-import express from 'express';
-import pino from 'pino';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import express from 'express';
 import multer from 'multer';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import pino from 'pino';
 import { In } from 'typeorm';
-
-import { wrapExpressPromise, assertFound } from '../util';
 import { User } from '../entity/User';
 import { ServiceError } from '../error/service-error';
+import { assertFound, wrapExpressPromise } from '../util';
 import { loggedInMiddleware } from './middleware/logged-in-middleware';
 
 const logger = pino();
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/avatar/'),
-  filename: (req, file, cb) => cb(null, uuidv4() + path.extname(file.originalname)),
-});
 
 // Hosted at /api/users
 const usersRoutes = express.Router();
@@ -85,15 +78,6 @@ usersRoutes.get(
     }
 
     return { loggedIn: true, user: mapUser(user) };
-  })
-);
-
-usersRoutes.post(
-  '/:id/avatar',
-  loggedInMiddleware,
-  multer({ storage }).single('avatar'),
-  wrapExpressPromise<UploadAvatarRequest, UploadAvatarResponse>(async (req, res) => {
-    return { location: `/media/avatar/${req.file.filename}` };
   })
 );
 
