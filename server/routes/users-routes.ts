@@ -81,6 +81,25 @@ usersRoutes.get(
   })
 );
 
+usersRoutes.post(
+  '/:userId/details',
+  loggedInMiddleware,
+  wrapExpressPromise<UpdateUserDetailsRequest, UpdateUserDetailsResponse>(async (req, res) => {
+    const { userId } = req.params;
+    const { displayName, avatarUrl } = req.body;
+    const user = await User.findOne({ id: userId });
+    assertFound(user);
+    if (displayName) {
+      user.displayName = displayName;
+    }
+    if (avatarUrl) {
+      user.avatarUrl = avatarUrl;
+    }
+    await user.save();
+    return { user: mapUser(user) };
+  })
+);
+
 function mapUser(user: User): IUser {
   return {
     id: user.id,
