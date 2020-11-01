@@ -12,6 +12,8 @@ declare global {
 
   interface IConversation {
     id: string;
+    name: string;
+    avatarUrl?: string;
     lastMessage?: IMessage;
   }
 

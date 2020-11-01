@@ -34,22 +34,25 @@ conversationRoutes.post(
     const allUsers = [userId, ...users];
 
     // Check all users exist
-    checkUsersExist(allUsers);
+    const userEntities = await getUsers(allUsers);
 
     // Create new conversation and add each user as a particpants in one transation
     const conversationId = `C${crypto.randomBytes(12).toString('hex')}`.substr(0, 12);
+    const name = `Chat with ${userEntities
+      .map((u) => u.displayName)
+      .sort()
+      .join(', ')}`;
+    let conversation: Conversation;
     await getConnection().transaction(async (tm) => {
-      const conversation = tm.create(Conversation, { id: conversationId });
-      tm.save(conversation);
+      conversation = tm.create(Conversation, { id: conversationId, name });
+      await tm.save(conversation);
 
       for (const user of allUsers) {
         await createParticipant(user, conversationId, tm);
       }
     });
     return {
-      conversation: {
-        id: conversationId,
-      },
+      conversation: mapConversation(conversation),
     };
   })
 );
@@ -63,13 +66,14 @@ conversationRoutes.post(
     const { userId } = req.session;
 
     //Check all users exist
-    checkUsersExist(users);
+    await getUsers(users);
 
     // Check logged in user is in coversation
     const participant = await Participant.findOne({ user: userId, conversation: conversationId });
     if (!participant) {
       throw new ServiceError(`User ${userId} not a member of conversation ${conversationId}`, 400);
     }
+    const conversation = await Conversation.findOne({ id: conversationId });
 
     // Add users in one transaction
     await getConnection().transaction(async (tm) => {
@@ -78,7 +82,7 @@ conversationRoutes.post(
       }
     });
 
-    return { conversation: { id: conversationId } };
+    return { conversation: mapConversation(conversation) };
   })
 );
 
@@ -105,10 +109,7 @@ conversationRoutes.get(
     const messages = await Message.find({ id: In(conversations.map((c) => c.lastMessage)) });
     const conversationToMessage = indexBy(messages, 'conversation');
     return {
-      conversations: conversationsParticipatedIn.map((p) => ({
-        id: p.conversation,
-        lastMessage: mapMessage(conversationToMessage[p.conversation]),
-      })),
+      conversations: conversations.map((c) => mapConversation(c, conversationToMessage[c.id])),
     };
   })
 );
@@ -132,10 +133,7 @@ conversationRoutes.post(
     conversation.lastMessage = message.id;
     conversation.save();
     return {
-      conversation: {
-        id: conversationId,
-        lastMessage: mapMessage(message),
-      },
+      conversation: mapConversation(conversation, message),
     };
   })
 );
@@ -150,7 +148,7 @@ conversationRoutes.get(
   })
 );
 
-async function checkUsersExist(userIds: Array<string>) {
+async function getUsers(userIds: Array<string>) {
   const foundUsers = await User.find({ id: In(userIds) });
   const missingUsers = difference(
     userIds,
@@ -159,6 +157,7 @@ async function checkUsersExist(userIds: Array<string>) {
   if (missingUsers.length > 0) {
     throw new ServiceError(`Users not found [${missingUsers.join(',')}]`, 404);
   }
+  return foundUsers;
 }
 
 async function createParticipant(user: string, conversation: string, tm: EntityManager) {
@@ -183,6 +182,18 @@ function mapMessage(message?: Message): IMessage {
     sendingUser: message.sendingUser,
     content: message.content,
     timestamp: message.createdAt.getTime(),
+  };
+}
+
+function mapConversation(conversation?: Conversation, lastMessage?: Message): IConversation {
+  if (!conversation) {
+    return null;
+  }
+  return {
+    id: conversation.id,
+    name: conversation.name,
+    avatarUrl: conversation.avatarUrl,
+    lastMessage: mapMessage(lastMessage),
   };
 }
 
