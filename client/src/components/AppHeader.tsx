@@ -3,6 +3,7 @@ import { AppBar, Avatar, Box, IconButton, makeStyles, Toolbar, Typography } from
 import PersonIcon from '@material-ui/icons/Person';
 import CreateIcon from '@material-ui/icons/Create';
 import { MobileView } from '../types';
+import { Link } from '@reach/router';
 
 const useStyles = makeStyles((theme) => ({
   composeButton: {
@@ -27,9 +28,11 @@ export function AppHeader(props: AppHeaderProps) {
     <AppBar style={{ flexDirection: isMobile ? 'column' : 'row' }}>
       <Box width={isMobile ? 'auto' : '35vw'}>
         <Toolbar>
-          <Avatar>
-            <PersonIcon />
-          </Avatar>
+          <Link to={isMobile && !isComposing ? '..' : '/'}>
+            <Avatar>
+              <PersonIcon />
+            </Avatar>
+          </Link>
           <Box mr={2} />
           <Typography variant="h5">Chats</Typography>
           <IconButton
