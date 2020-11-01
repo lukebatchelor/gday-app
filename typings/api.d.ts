@@ -35,6 +35,17 @@ declare type CreateConversationRequest = TypedRequest<{}, CreateConversationRequ
 declare type CreateConversationResponseBody = { conversation: IConversation };
 declare type CreateConversationResponse = TypedResponse<CreateConversationResponseBody>;
 
+// POST /api/conversions/:id
+declare type AddUsersToConversationRequestBody = { users: Array<string> };
+declare type AddUsersToConversationRequestParams = { id: string };
+declare type AddUsersToConversationRequest = TypedRequest<
+  AddUsersToConversationRequestParams,
+  AddUsersToConversationRequestBody,
+  {}
+>;
+declare type AddUsersToConversationResponseBody = { conversation: IConversation };
+declare type AddUsersToConversationResponse = TypedResponse<AddUsersToConversationResponseBody>;
+
 // GET /api/conversions
 declare type GetConversationsRequestBody = {};
 declare type GetConversationsRequest = TypedRequest<{}, GetConversationsRequestBody, {}>;

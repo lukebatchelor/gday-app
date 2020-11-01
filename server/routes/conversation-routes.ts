@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import express from 'express';
 import pino from 'pino';
 import { difference } from 'underscore';
-import { In, getConnection } from 'typeorm';
+import { In, getConnection, EntityManager } from 'typeorm';
 import { indexBy } from 'underscore';
 
 import { wrapExpressPromise, assertFound } from '../util';
@@ -34,14 +34,7 @@ conversationRoutes.post(
     const allUsers = [userId, ...users];
 
     // Check all users exist
-    const foundUsers = await User.find({ id: In([userId, ...users]) });
-    const missingUsers = difference(
-      allUsers,
-      foundUsers.map((u) => u.id)
-    );
-    if (missingUsers.length > 0) {
-      throw new ServiceError(`Users not found [${missingUsers.join(',')}]`, 404);
-    }
+    checkUsersExist(allUsers);
 
     // Create new conversation and add each user as a particpants in one transation
     const conversationId = `C${crypto.randomBytes(12).toString('hex')}`.substr(0, 12);
@@ -50,8 +43,7 @@ conversationRoutes.post(
       tm.save(conversation);
 
       for (const user of allUsers) {
-        const userEntity = tm.create(Participant, { user, conversation: conversationId });
-        tm.save(userEntity);
+        await createParticipant(user, conversationId, tm);
       }
     });
     return {
@@ -59,6 +51,34 @@ conversationRoutes.post(
         id: conversationId,
       },
     };
+  })
+);
+
+conversationRoutes.post(
+  '/:id',
+  loggedInMiddleware,
+  wrapExpressPromise<AddUsersToConversationRequest, AddUsersToConversationResponse>(async (req, res) => {
+    const { id: conversationId } = req.params;
+    const { users } = req.body;
+    const { userId } = req.session;
+
+    //Check all users exist
+    checkUsersExist(users);
+
+    // Check logged in user is in coversation
+    const participant = await Participant.findOne({ user: userId, conversation: conversationId });
+    if (!participant) {
+      throw new ServiceError(`User ${userId} not a member of conversation ${conversationId}`, 400);
+    }
+
+    // Add users in one transaction
+    await getConnection().transaction(async (tm) => {
+      for (const user of users) {
+        await createParticipant(user, conversationId, tm);
+      }
+    });
+
+    return { conversation: { id: conversationId } };
   })
 );
 
@@ -116,6 +136,30 @@ conversationRoutes.get(
     return { messages };
   })
 );
+
+async function checkUsersExist(userIds: Array<string>) {
+  const foundUsers = await User.find({ id: In(userIds) });
+  const missingUsers = difference(
+    userIds,
+    foundUsers.map((u) => u.id)
+  );
+  if (missingUsers.length > 0) {
+    throw new ServiceError(`Users not found [${missingUsers.join(',')}]`, 404);
+  }
+}
+
+async function createParticipant(user: string, conversation: string, tm: EntityManager) {
+  const userEntity = tm.create(Participant, { user, conversation });
+  try {
+    await tm.save(userEntity);
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      throw new ServiceError(`User ${user} already exists in conversation ${conversation}`, 400);
+    }
+    console.log(error);
+    throw error;
+  }
+}
 
 function mapMessage(message?: Message): IMessage {
   if (!message) {
