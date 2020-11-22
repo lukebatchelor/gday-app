@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 type AppHeaderProps = {
   isMobile: boolean;
   onCompose: () => void;
-  onOpenProfileDialog?: () => void;
+  onOpenProfileDialog?: (user: IUser) => void;
   isComposing: boolean;
   selectedConversationId?: string;
 };
@@ -52,7 +52,7 @@ export function AppHeader(props: AppHeaderProps) {
               </IconButton>
             )}
 
-            <IconButton onClick={onOpenProfileDialog}>
+            <IconButton onClick={() => onOpenProfileDialog(user)}>
               <Avatar src={user.avatarUrl}></Avatar>
             </IconButton>
             <Box mr={2} />
@@ -75,7 +75,7 @@ export function AppHeader(props: AppHeaderProps) {
     <AppBar style={{ flexDirection: 'row' }}>
       <Box width="35vw">
         <Toolbar>
-          <IconButton onClick={onOpenProfileDialog}>
+          <IconButton onClick={() => onOpenProfileDialog(user)}>
             <Avatar src={user.avatarUrl}></Avatar>
           </IconButton>
           <Box mr={2} />

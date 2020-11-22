@@ -34,12 +34,12 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-type ProfileDialogProps = {
+type ConversationDialogProps = {
   isOpen: boolean;
   handleClose: () => void;
   profileUser: IUser;
 };
-export function ProfileDialog(props: ProfileDialogProps) {
+export function ConversationDialog(props: ConversationDialogProps) {
   const classes = useStyles();
   const { isOpen, handleClose, profileUser } = props;
   const [user] = useContext(UserContext);
