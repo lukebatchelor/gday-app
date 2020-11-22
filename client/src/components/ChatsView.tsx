@@ -1,4 +1,4 @@
-import { Avatar, Box, InputAdornment, makeStyles, TextField, Typography } from '@material-ui/core';
+import { Avatar, Box, InputAdornment, makeStyles, TextField, Tooltip, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { Link } from '@reach/router';
 import React, { useEffect, useMemo } from 'react';
@@ -56,14 +56,14 @@ export function ChatsView(props: ChatsViewProps) {
 
   const onSearchSubmit = (data: FormValues) => {
     const { search } = data;
-    setSearchStr(search);
     filteredConversations.current = conversations.filter((c) => conversationMatchSearch(c, search));
+    setSearchStr(search);
   };
 
   useEffect(() => {
     getConversations().then((res) => {
-      setConversations(res.conversations);
       filteredConversations.current = res.conversations.filter((c) => conversationMatchSearch(c, searchStr));
+      setConversations(res.conversations);
     });
   }, []);
 
@@ -126,14 +126,20 @@ export function ChatsView(props: ChatsViewProps) {
                           : userMap[c.lastMessage.sendingUser] && userMap[c.lastMessage.sendingUser].displayName}
                         : {!c.lastMessage ? 'None ' : c.lastMessage.content}
                       </Typography>
-                      <Typography className={classes.messageTimeStamp}>
-                        {!c.lastMessage
-                          ? '?? '
-                          : new Date(c.lastMessage.timestamp).toLocaleTimeString('en-GB', {
-                              hour: 'numeric',
-                              minute: 'numeric',
-                            })}
-                      </Typography>
+                      <Tooltip
+                        title={new Date(c.lastMessage.timestamp).toLocaleString()}
+                        aria-label="date-sent"
+                        placement="right"
+                      >
+                        <Typography className={classes.messageTimeStamp}>
+                          {!c.lastMessage
+                            ? '?? '
+                            : new Date(c.lastMessage.timestamp).toLocaleTimeString('en-GB', {
+                                hour: 'numeric',
+                                minute: 'numeric',
+                              })}
+                        </Typography>
+                      </Tooltip>
                     </>
                   )}
                   {!c.lastMessage && <Typography className={classes.messageText}>Empty</Typography>}
