@@ -34,7 +34,7 @@ declare type GetAuthenticatedRequest = TypedRequest<{}, GetAuthenticatedRequestB
 declare type GetAuthenticatedResponseBody = { loggedIn: boolean; user?: IUser };
 declare type GetAuthenticatedResponse = TypedResponse<GetAuthenticatedResponseBody>;
 
-// POST /api/user/:userId/details
+// POST /api/users/:userId/details
 declare type UpdateUserDetailsRequestBody = { displayName?: string; avatarUrl?: string };
 declare type UpdateUserDetailsRequestParams = { userId: string };
 declare type UpdateUserDetailsRequest = TypedRequest<UpdateUserDetailsRequestParams, UpdateUserDetailsRequestBody, {}>;
@@ -110,7 +110,7 @@ declare type UploadFileToConversationResponseBody = { location: string };
 declare type UploadFileToConversationResponse = TypedResponse<UploadFileToConversationResponseBody>;
 
 // POST /api/upload/users/:userId/avatar
-declare type UploadAvatarRequestBody = {};
+declare type UploadAvatarRequestBody = {}; // Note: needs to upload an image in FormData called "avatar"
 declare type UploadAvatarRequestParams = { userId: string };
 declare type UploadAvatarRequest = TypedRequest<{}, UploadAvatarRequestBody, {}>;
 declare type UploadAvatarResponseBody = { location: string };

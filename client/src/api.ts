@@ -86,6 +86,16 @@ export async function getAllUsers() {
   return getRequest<GetUsersResponseBody>('/api/users');
 }
 
+type UserDetails = {
+  displayName: string;
+  avatarUrl: string;
+};
+
+export async function setUserDetails(userId: string, userDetails: UserDetails) {
+  const body: UpdateUserDetailsRequestBody = userDetails;
+  return postRequest<UpdateUserDetailsRequestBody, UpdateUserDetailsResponseBody>(`/api/users/${userId}/details`, body);
+}
+
 export async function getConversations() {
   return getRequest<GetConversationsResponseBody>('/api/conversations');
 }
@@ -109,4 +119,14 @@ export async function sendMessage(conversationId: string, content: string) {
     `/api/conversations/${conversationId}/sendmessage`,
     body
   );
+}
+export async function setUserAvatar(userId: string, userAvatar: any) {
+  const formData = new FormData();
+  formData.append('avatar', userAvatar);
+  const res = await fetch(`/api/upload/users/${userId}/avatar`, {
+    method: 'POST',
+    body: formData,
+  });
+  console.log(res);
+  return res.json();
 }

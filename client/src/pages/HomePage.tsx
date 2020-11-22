@@ -17,6 +17,7 @@ import { ChatsView } from '../components/ChatsView';
 import { ConversationView } from '../components/ConversationView';
 import { AppHeader } from '../components/AppHeader';
 import type { MobileView } from '../types';
+import { ProfileDialog } from '../components/ProfileDialog';
 
 const useStyles = makeStyles((theme) => ({
   spacer: {
@@ -33,6 +34,7 @@ export function HomePage(props: HomeProps) {
   // Current view we are in (only for mobile)
   const [curMobileView, setCurMobileView] = useState<MobileView>('Chats');
   const [isComposing, setIsComposing] = useState<boolean>(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState<boolean>(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const onComposeClicked = () => {
     setIsComposing(true);
@@ -47,22 +49,47 @@ export function HomePage(props: HomeProps) {
     })();
   }, [isMobile, conversationId]);
 
+  const openProfileDialog = () => setProfileDialogOpen(true);
+  const closeProfileDialog = () => setProfileDialogOpen(false);
+
+  if (isMobile)
+    return (
+      <Box>
+        <CssBaseline />
+        <AppHeader
+          isMobile={true}
+          isComposing={isComposing}
+          onCompose={onComposeClicked}
+          selectedConversationId={conversationId}
+          onOpenProfileDialog={openProfileDialog}
+        />
+        <Box className={classes.spacer} />
+        <Box display="flex" flexDirection="column" height="calc(100vh - 64px)">
+          {curMobileView === 'Chats' && !conversationId ? <ChatsView isMobile={true} /> : null}
+          {curMobileView === 'Conversation' ? (
+            <ConversationView isMobile={true} isComposing={isComposing} conversationId={conversationId} />
+          ) : null}
+        </Box>
+        <ProfileDialog isOpen={profileDialogOpen} handleClose={closeProfileDialog} />
+      </Box>
+    );
+
   return (
     <Box>
       <CssBaseline />
       <AppHeader
-        isMobile={isMobile}
+        isMobile={false}
         isComposing={isComposing}
         onCompose={onComposeClicked}
         selectedConversationId={conversationId}
+        onOpenProfileDialog={openProfileDialog}
       />
       <Box className={classes.spacer} />
-      <Box display="flex" flexDirection={isMobile ? 'column' : 'row'} height="calc(100vh - 64px)">
-        {!isMobile || (curMobileView === 'Chats' && !conversationId) ? <ChatsView isMobile={isMobile} /> : null}
-        {!isMobile || curMobileView === 'Conversation' ? (
-          <ConversationView isMobile={isMobile} isComposing={isComposing} conversationId={conversationId} />
-        ) : null}
+      <Box display="flex" flexDirection="row" height="calc(100vh - 64px)">
+        <ChatsView isMobile={false} />
+        <ConversationView isMobile={false} isComposing={isComposing} conversationId={conversationId} />
       </Box>
+      <ProfileDialog isOpen={profileDialogOpen} handleClose={closeProfileDialog} />
     </Box>
   );
 }
