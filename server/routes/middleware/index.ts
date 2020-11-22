@@ -12,7 +12,7 @@ function configure(app: Application) {
   // Helmet for sane default security headers.
   app.use(helmet());
   app.use(cors());
-  app.use(requestLoggerMiddleware());
+  // app.use(requestLoggerMiddleware());
   app.use(express.json());
 }
 

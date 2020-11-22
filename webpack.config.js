@@ -20,7 +20,7 @@ const config = {
     historyApiFallback: true,
     proxy: [
       {
-        context: ['/api', '/media'],
+        context: ['/api', '/media', '/socket.io'],
         target: 'http://localhost:9000',
       },
     ],

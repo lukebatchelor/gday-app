@@ -12,6 +12,7 @@ import { loggedInMiddleware } from './middleware/logged-in-middleware';
 import { Conversation } from '../entity/Conversation';
 import { Participant } from '../entity/Participant';
 import { Message } from '../entity/Message';
+import { sendNewMessageToUsers } from '../sockets/sockets';
 
 const logger = pino();
 
@@ -132,6 +133,10 @@ conversationRoutes.post(
     await message.save();
     conversation.lastMessage = message.id;
     conversation.save();
+
+    // Notify other users
+    const usersToNotify = participants.map((p) => p.user).filter((u) => u !== userId);
+    sendNewMessageToUsers(usersToNotify, conversationId, mapMessage(message));
     return {
       conversation: mapConversation(conversation, message),
     };
@@ -226,7 +231,6 @@ function mapMessage(message?: Message): IMessage {
   if (!message) {
     return null;
   }
-  console.log(message);
   return {
     sendingUser: message.sendingUser,
     content: message.content,
