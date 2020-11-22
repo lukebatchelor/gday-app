@@ -2,6 +2,7 @@ import { Avatar, Box, InputAdornment, makeStyles, TextField, Typography } from '
 import SearchIcon from '@material-ui/icons/Search';
 import { Link } from '@reach/router';
 import React, { useEffect, useMemo } from 'react';
+import { useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useStateIfMounted } from 'use-state-if-mounted';
 import { getAllUsers, getConversations } from '../api';
@@ -18,6 +19,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function conversationMatchSearch(conversation: IConversation, searchStr: string) {
+  if (!searchStr) return true;
+  if (conversation.name.includes(searchStr)) return true;
+  if (conversation.lastMessage) {
+    return (
+      conversation.lastMessage.content.includes(searchStr) || conversation.lastMessage.sendingUser.includes(searchStr)
+    );
+  }
+  return false;
+}
+
 type FormValues = { search: string };
 const defaultValues = { search: '' };
 
@@ -30,8 +42,10 @@ export function ChatsView(props: ChatsViewProps) {
   const { isMobile } = props;
   const classes = useStyles();
   const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
+  const filteredConversations = useRef<Array<IConversation>>([]);
   const [conversations, setConversations] = useStateIfMounted<Array<IConversation>>([]);
   const [allUsers, setAllUsers] = useStateIfMounted<Array<IUser>>([]);
+  const [searchStr, setSearchStr] = useStateIfMounted<string>('');
   const userMap = useMemo(() => {
     const map: Record<string, IUser> = {};
     allUsers.forEach((user) => {
@@ -42,12 +56,14 @@ export function ChatsView(props: ChatsViewProps) {
 
   const onSearchSubmit = (data: FormValues) => {
     const { search } = data;
-    console.log('Searched for: ', search);
+    setSearchStr(search);
+    filteredConversations.current = conversations.filter((c) => conversationMatchSearch(c, search));
   };
 
   useEffect(() => {
     getConversations().then((res) => {
       setConversations(res.conversations);
+      filteredConversations.current = res.conversations.filter((c) => conversationMatchSearch(c, searchStr));
     });
   }, []);
 
@@ -94,7 +110,7 @@ export function ChatsView(props: ChatsViewProps) {
         </form>
 
         <Box mt={2} display="flex" flexDirection="column">
-          {conversations.map((c, i) => (
+          {filteredConversations.current.map((c, i) => (
             <Box key={`${c}-${i}`} display="flex" marginY={1} alignItems="center">
               <Link to={`/${c.id}`}>
                 <Avatar src={c.avatarUrl}></Avatar>
