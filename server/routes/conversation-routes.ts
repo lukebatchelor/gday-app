@@ -12,9 +12,10 @@ import { loggedInMiddleware } from './middleware/logged-in-middleware';
 import { Conversation } from '../entity/Conversation';
 import { Participant } from '../entity/Participant';
 import { Message } from '../entity/Message';
-import { sendNewMessageToUsers } from '../sockets/sockets';
+import { createPublisher } from '../notification/notification-center';
 
 const logger = pino();
+const publisher = createPublisher();
 
 // Hosted at /api/users
 const conversationRoutes = express.Router();
@@ -136,7 +137,7 @@ conversationRoutes.post(
 
     // Notify other users
     const usersToNotify = participants.map((p) => p.user).filter((u) => u !== userId);
-    sendNewMessageToUsers(usersToNotify, conversationId, mapMessage(message));
+    publisher.publishMessageToConversation(conversationId, mapMessage(message));
     return {
       conversation: mapConversation(conversation, message),
     };

@@ -8,7 +8,7 @@
   "entities": ["server/entity/*.ts"],
   "migrations": ["server/migration/*.ts"],
   "charset": "utf8mb4_unicode_ci",
-  "logging": true,
+  "logging": false,
   "cli": {
     "migrationsDir": "server/migration"
   }

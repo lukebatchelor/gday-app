@@ -1,16 +1,15 @@
-import socketIo from 'socket.io';
-import http from 'http';
-import pino from 'pino';
-import { getSafeSocket, SafeSocket } from './safe-socket';
 import cookie from 'cookie';
+import http from 'http';
+import Redis from 'ioredis';
+import pino from 'pino';
+import socketIo from 'socket.io';
 
-import { redisClient } from '../redis/redis';
-import { User } from '../entity/User';
+import { getSafeSocket, SafeSocket } from './safe-socket';
+import { createSubscriber } from '../notification/notification-center';
+import { Participant } from '../entity/Participant';
 
 const logger = pino();
-
-type ClientMap = { [userId: string]: Array<{ clientId: string; client: SafeSocket }> };
-const clients: ClientMap = {};
+const redisClient = new Redis(process.env.REDIS_URL);
 
 export function configureSockets(appServer: http.Server) {
   const server = socketIo(appServer, { pingTimeout: 2000, pingInterval: 10000 });
@@ -32,50 +31,22 @@ export function configureSockets(appServer: http.Server) {
     logger.info(`Client connected  ${client.id} (${userId})`);
     const safeSocket = getSafeSocket(client, server);
 
-    addClient(userId, safeSocket);
+    // Subscribe to events in any conversation the client belongs to.
+    const subscriber = createSubscriber(newMessage);
+    const conversations = (await Participant.find({ user: userId })).map((p) => p.conversation);
+    for (const conversation of conversations) {
+      subscriber.subscribeToConversation(conversation);
+    }
+
+    function newMessage({ conversation, message }: { conversation: string; message: IMessage }) {
+      safeSocket.safeEmit('newMessage', { conversation, message });
+    }
 
     // Setup event listeners for client
     safeSocket.safeOn('disconnect', handleDisconnect);
-
-    function handleDisconnect() {
+    async function handleDisconnect() {
       logger.info(`${client.id} disconnected`);
-      removeClient(userId, safeSocket);
+      await subscriber.unsubscribe();
     }
   });
-}
-
-export function sendNewMessageToUsers(users: Array<string>, conversation: string, message: IMessage) {
-  for (const user of users) {
-    logger.info('sending notification to ' + user);
-    const clientsForUser = clients[user];
-    if (!clientsForUser) {
-      return;
-    }
-    console.log(clientsForUser);
-    for (const client of clientsForUser) {
-      client.client.safeEmit('newMessage', { conversation, message });
-    }
-  }
-}
-
-setInterval(() => logClients(), 5000);
-
-function logClients() {
-  logger.info(
-    Object.keys(clients)
-      .map((user) => user + ':' + clients[user].length)
-      .join(',')
-  );
-}
-
-function addClient(userId: string, client: SafeSocket) {
-  if (clients[userId]) {
-    clients[userId].push({ clientId: client.id, client });
-  } else {
-    clients[userId] = [{ clientId: client.id, client }];
-  }
-}
-
-function removeClient(userId: string, client: SafeSocket) {
-  clients[userId] = clients[userId].filter((c) => c.clientId !== client.id);
 }
