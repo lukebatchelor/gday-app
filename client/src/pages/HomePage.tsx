@@ -34,7 +34,7 @@ export function HomePage(props: HomeProps) {
   // Current view we are in (only for mobile)
   const [curMobileView, setCurMobileView] = useState<MobileView>('Chats');
   const [isComposing, setIsComposing] = useState<boolean>(false);
-  const [profileDialogOpen, setProfileDialogOpen] = useState<boolean>(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState<IUser>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const onComposeClicked = () => {
     setIsComposing(true);
@@ -49,8 +49,10 @@ export function HomePage(props: HomeProps) {
     })();
   }, [isMobile, conversationId]);
 
-  const openProfileDialog = () => setProfileDialogOpen(true);
-  const closeProfileDialog = () => setProfileDialogOpen(false);
+  const openProfileDialog = (user: IUser) => {
+    setProfileDialogOpen(user);
+  };
+  const closeProfileDialog = () => setProfileDialogOpen(null);
 
   if (isMobile)
     return (
@@ -70,7 +72,7 @@ export function HomePage(props: HomeProps) {
             <ConversationView isMobile={true} isComposing={isComposing} conversationId={conversationId} />
           ) : null}
         </Box>
-        <ProfileDialog isOpen={profileDialogOpen} handleClose={closeProfileDialog} />
+        <ProfileDialog isOpen={!!profileDialogOpen} handleClose={closeProfileDialog} profileUser={profileDialogOpen} />
       </Box>
     );
 
@@ -89,7 +91,7 @@ export function HomePage(props: HomeProps) {
         <ChatsView isMobile={false} />
         <ConversationView isMobile={false} isComposing={isComposing} conversationId={conversationId} />
       </Box>
-      <ProfileDialog isOpen={profileDialogOpen} handleClose={closeProfileDialog} />
+      <ProfileDialog isOpen={!!profileDialogOpen} handleClose={closeProfileDialog} profileUser={profileDialogOpen} />
     </Box>
   );
 }
