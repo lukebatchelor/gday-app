@@ -1,8 +1,11 @@
 {
-  "name": "2020-node-typescript-webpack-static-app-template",
+  "name": "gday-messenger",
   "private": true,
   "version": "1.0.0",
   "main": "index.js",
+  "files": [
+    "dist"
+  ],
   "author": "Luke.Batchelor <batchelor.luke+git@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -11,7 +14,7 @@
     "build": "yarn clean && yarn build:client && yarn build:server",
     "build:client": "webpack --mode=production",
     "build:server": "tsc -p server.tsconfig.json",
-    "prepack": "build",
+    "prepack": "yarn build",
     "dev": "concurrently --kill-others-on-fail 'yarn dev-server' 'yarn dev-client'",
     "dev:server": "ts-node-dev --project server.tsconfig.json --watch 'server/**/*.ts' server/index.ts | ./node_modules/.bin/pino-pretty",
     "dev:client": "webpack-dev-server",
