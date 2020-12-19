@@ -102,7 +102,7 @@ declare type GetMessagesForConversationResponse = TypedResponse<GetMessagesForCo
  * Uploads
  */
 
-// POST /api/upload/conversations/:conversationId
+// POST /api/upload/conversations/:conversationId // note: needs to upload an image in FormData called "file"
 declare type UploadFileToConversationRequestBody = {};
 declare type UploadFileToConversationRequestParams = { conversationId: string };
 declare type UploadFileToConversationRequest = TypedRequest<{}, UploadFileToConversationRequestBody, {}>;

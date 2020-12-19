@@ -109,6 +109,26 @@ export async function createConversation(users: Array<IUser>) {
   return postRequest<CreateConversationRequestBody, CreateConversationResponseBody>('/api/conversations', body);
 }
 
+type ConversationData = { name: string; avatarUrl: string };
+export async function setConversationDetails(conversationId: string, conversationData: ConversationData) {
+  const body: UpdateConversationDetailsRequestBody = conversationData;
+  return postRequest<UpdateConversationDetailsRequestBody, UpdateConversationDetailsResponseBody>(
+    `/api/conversations/${conversationId}/details`,
+    body
+  );
+}
+
+export async function uploadConversationFile(conversationId: string, file: any) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`/api/upload/conversations/${conversationId}`, {
+    method: 'POST',
+    body: formData,
+  });
+  console.log(res);
+  return res.json();
+}
+
 export async function getMessages(conversationId: string) {
   return getRequest<GetMessagesForConversationResponseBody>(`/api/conversations/${conversationId}/messages`);
 }

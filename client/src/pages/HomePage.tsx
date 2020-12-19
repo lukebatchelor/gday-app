@@ -18,6 +18,7 @@ import { ConversationView } from '../components/ConversationView';
 import { AppHeader } from '../components/AppHeader';
 import type { MobileView } from '../types';
 import { ProfileDialog } from '../components/ProfileDialog';
+import { ConversationInfoDialog } from '../components/ConversationInfoDialog';
 
 const useStyles = makeStyles((theme) => ({
   spacer: {
@@ -35,6 +36,7 @@ export function HomePage(props: HomeProps) {
   const [curMobileView, setCurMobileView] = useState<MobileView>('Chats');
   const [isComposing, setIsComposing] = useState<boolean>(false);
   const [profileDialogOpen, setProfileDialogOpen] = useState<IUser>(null);
+  const [conversationDialogOpen, setConversationDialogOpen] = useState<boolean>(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const onComposeClicked = () => {
     setIsComposing(true);
@@ -57,6 +59,10 @@ export function HomePage(props: HomeProps) {
     setProfileDialogOpen(user);
   };
   const closeProfileDialog = () => setProfileDialogOpen(null);
+  const closeConversationInfoDialog = () => setConversationDialogOpen(false);
+  const onConversationInfoOpen = () => {
+    setConversationDialogOpen(true);
+  };
 
   if (isMobile)
     return (
@@ -69,6 +75,7 @@ export function HomePage(props: HomeProps) {
           onCompose={onComposeClicked}
           selectedConversationId={conversationId}
           onOpenProfileDialog={openProfileDialog}
+          onConversationInfoOpen={onConversationInfoOpen}
         />
         <Box className={classes.spacer} />
         <Box display="flex" flexDirection="column" height="calc(100vh - 64px)">
@@ -78,6 +85,11 @@ export function HomePage(props: HomeProps) {
           ) : null}
         </Box>
         <ProfileDialog isOpen={!!profileDialogOpen} handleClose={closeProfileDialog} profileUser={profileDialogOpen} />
+        <ConversationInfoDialog
+          isOpen={!!conversationDialogOpen}
+          handleClose={closeConversationInfoDialog}
+          conversationId={conversationId}
+        />
       </Box>
     );
 

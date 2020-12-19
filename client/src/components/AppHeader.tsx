@@ -1,6 +1,7 @@
 import { AppBar, Avatar, Box, IconButton, makeStyles, Toolbar, Typography } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import InfoIcon from '@material-ui/icons/Info';
 import { Link, useNavigate } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { getConversationDetails } from '../api';
@@ -19,13 +20,22 @@ type AppHeaderProps = {
   isMobile: boolean;
   onCompose: () => void;
   onOpenProfileDialog?: (user: IUser) => void;
+  onConversationInfoOpen?: () => void;
   isComposing: boolean;
   onComposeClose?: () => void;
   selectedConversationId?: string;
 };
 export function AppHeader(props: AppHeaderProps) {
   const classes = useStyles();
-  const { isMobile, onCompose, isComposing, onComposeClose, selectedConversationId, onOpenProfileDialog } = props;
+  const {
+    isMobile,
+    onCompose,
+    isComposing,
+    onComposeClose,
+    selectedConversationId,
+    onOpenProfileDialog,
+    onConversationInfoOpen,
+  } = props;
   const [user] = useContext(UserContext);
   const [chatName, setChatName] = useState('Group chat');
   const [conversationAvatarUrl, setConversationAvatarUrl] = useState('/404');
@@ -45,7 +55,7 @@ export function AppHeader(props: AppHeaderProps) {
   if (isMobile) {
     // avatar will either be blank (when creating new message), the conversationAvatar (when in a conversation)
     // or the user avatar (when in conversation view for getting to profile view)
-    const avatarUrl = isComposing ? '' : selectedConversationId ? '' : user.avatarUrl;
+    const avatarUrl = isComposing ? '' : selectedConversationId ? conversationAvatarUrl : user.avatarUrl;
     const title = isComposing ? 'New Message' : selectedConversationId ? chatName : 'Chats';
     const onBackClick = () => {
       if (isComposing) onComposeClose();
@@ -75,6 +85,17 @@ export function AppHeader(props: AppHeaderProps) {
                 className={classes.composeButton}
               >
                 <CreateIcon fontSize="small" />
+              </IconButton>
+            )}
+            {selectedConversationId && (
+              <IconButton
+                aria-label="Conversation info"
+                onClick={onConversationInfoOpen}
+                color="inherit"
+                size="small"
+                className={classes.composeButton}
+              >
+                <InfoIcon />
               </IconButton>
             )}
           </Toolbar>
