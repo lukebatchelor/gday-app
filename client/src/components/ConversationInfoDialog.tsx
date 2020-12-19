@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Avatar,
   Box,
@@ -52,6 +52,10 @@ export function ConversationInfoDialog(props: ConversationInfoDialogProps) {
   const [uploadedImg, setUploadedImg] = useState(null);
   const [conversationName, setConversationName] = useState<string>('');
   const conversation = state.conversations[conversationId];
+
+  useEffect(() => {
+    if (conversation) setConversationName(conversation.name);
+  }, [conversation]);
 
   const handleImgScaleChange = (e: any, newScale: number) => {
     setImgScale(newScale);

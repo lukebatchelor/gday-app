@@ -62,7 +62,7 @@ export function AppHeader(props: AppHeaderProps) {
               </IconButton>
             )}
 
-            <IconButton onClick={() => onOpenProfileDialog(user)}>
+            <IconButton onClick={() => !isComposing && !selectedConversationId && onOpenProfileDialog(user)}>
               <Avatar src={avatarUrl}></Avatar>
             </IconButton>
             <Box mr={2} />

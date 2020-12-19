@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Avatar,
   Box,
@@ -53,6 +53,10 @@ export function ProfileDialog(props: ProfileDialogProps) {
   const navigate = useNavigate();
 
   const showEditButton = profileUser && user && profileUser.id === user.id;
+
+  useEffect(() => {
+    setDisplayName(user.displayName);
+  }, [profileUser]);
 
   const handleImgScaleChange = (e: any, newScale: number) => {
     setImgScale(newScale);
