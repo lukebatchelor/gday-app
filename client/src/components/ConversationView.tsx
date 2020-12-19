@@ -109,7 +109,7 @@ export function ConversationView(props: ConversationViewProps) {
           </Box>
         )}
       </Box>
-      <Box>
+      <Box mt={2}>
         <form noValidate onSubmit={handleSubmit(onChatSubmit)}>
           <Controller
             control={control}

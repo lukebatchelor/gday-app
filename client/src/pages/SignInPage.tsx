@@ -95,7 +95,7 @@ export function SignInPage(props: SignInPageProps) {
       <CssBaseline />
       <div className={classes.paper}>
         <Typography variant="h2">G&apos;day</Typography>
-        <Avatar className={classes.avatar} src="logo_512x512.png"></Avatar>
+        <Avatar className={classes.avatar} src={`${appContext.basePathPrefix}/logo_512x512.png`}></Avatar>
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>

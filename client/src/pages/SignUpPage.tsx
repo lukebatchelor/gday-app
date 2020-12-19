@@ -102,7 +102,7 @@ export function SignUpPage(props: SignUpPageProps) {
       <CssBaseline />
       <div className={classes.paper}>
         <Typography variant="h2">G&apos;day</Typography>
-        <Avatar className={classes.avatar} src="logo_512x512.png" />
+        <Avatar className={classes.avatar} src={`${appContext.basePathPrefix}/logo_512x512.png`} />
         <Typography component="h1" variant="h5">
           Create new account
         </Typography>
