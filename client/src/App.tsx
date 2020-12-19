@@ -8,6 +8,8 @@ import { HomePage } from './pages/HomePage';
 import { SignInPage } from './pages/SignInPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { checkLoggedIn } from './api';
+import { safeOff, safeOn } from './sockets';
+import { ConversationCacheContext } from './contexts/ConversationCacheContext';
 
 const theme = responsiveFontSizes(createMuiTheme());
 
@@ -17,6 +19,7 @@ type AppProps = {
 export function App(props: AppProps) {
   const appContext = useContext(AppContext);
   const [, setUser] = useContext(UserContext);
+  const { state, dispatch } = useContext(ConversationCacheContext);
 
   useEffect(() => {
     (async () => {
@@ -28,6 +31,13 @@ export function App(props: AppProps) {
       }
       setUser({ ...user, loggedIn: true });
     })();
+  }, []);
+
+  useEffect(() => {
+    safeOn('newMessage', (msg) => {
+      dispatch({ type: 'NEW_MESSAGE', conversationId: msg.conversation, message: msg.message });
+    });
+    return () => safeOff('newMessage');
   }, []);
 
   return (

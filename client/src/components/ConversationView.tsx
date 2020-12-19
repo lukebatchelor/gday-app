@@ -1,9 +1,10 @@
 import { Box, makeStyles, TextField } from '@material-ui/core';
 import { useNavigate } from '@reach/router';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useStateIfMounted } from 'use-state-if-mounted';
 import { createConversation, getAllUsers, getMessages, sendMessage } from '../api';
+import { ConversationCacheContext } from '../contexts/ConversationCacheContext';
 import { ChatBubble } from './ChatBubble';
 import { Compose } from './Compose';
 const useStyles = makeStyles((theme) => ({
@@ -29,11 +30,13 @@ export function ConversationView(props: ConversationViewProps) {
   const classes = useStyles();
   const navigate = useNavigate();
   const composeUsersRef = useRef<Array<IUser>>([]);
+  const { state: conversationCacheContext, dispatch } = useContext(ConversationCacheContext);
 
   const { handleSubmit, control, watch, setValue } = useForm<FormValues>({ defaultValues });
   const chatContent = watch('chat');
   const [allUsers, setAllUsers] = useStateIfMounted<Array<IUser>>([]);
-  const [messages, setMessages] = useStateIfMounted<Array<IMessage>>([]);
+  // const [messages, setMessages] = useStateIfMounted<Array<IMessage>>([]);
+  const messages = conversationCacheContext.messages[conversationId] || [];
   const [lastTimeStamp, setLastTimeStamp] = useState<number>(0);
   const userMap = useMemo(() => {
     const map: Record<string, IUser> = {};
@@ -44,21 +47,15 @@ export function ConversationView(props: ConversationViewProps) {
   }, [allUsers]);
 
   const onChatSubmit = async (data: FormValues) => {
-    console.log('chat submit', data);
     if (isComposing) {
       const res = await createConversation(composeUsersRef.current);
-      console.log(res);
       if (res.conversation && res.conversation.id) {
         navigate(`/${res.conversation.id}`);
       }
     } else {
       if (conversationId && chatContent) {
         const res = await sendMessage(conversationId, chatContent);
-        if (res.conversation && res.conversation.lastMessage && res.conversation.lastMessage.timestamp) {
-          setLastTimeStamp(res.conversation.lastMessage.timestamp);
-        }
         setValue('chat', '', { shouldDirty: false });
-        console.log(res);
       }
     }
   };
@@ -68,11 +65,15 @@ export function ConversationView(props: ConversationViewProps) {
 
   useEffect(() => {
     if (!isComposing && conversationId) {
-      getMessages(conversationId).then((res) => {
-        setMessages(res.messages);
-      });
+      if (messages.length === 0) {
+        getMessages(conversationId).then((res) => {
+          if (messages.length === 0) {
+            dispatch({ type: 'ADD_MESSAGES', conversationId, messages: res.messages });
+          }
+        });
+      }
     }
-  }, [isComposing, conversationId, lastTimeStamp]);
+  }, [isComposing, conversationId, conversationCacheContext]);
 
   useEffect(() => {
     getAllUsers().then((res) => {

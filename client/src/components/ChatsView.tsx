@@ -1,11 +1,12 @@
 import { Avatar, Box, InputAdornment, makeStyles, TextField, Tooltip, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { Link } from '@reach/router';
-import React, { useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useStateIfMounted } from 'use-state-if-mounted';
 import { getAllUsers, getConversations } from '../api';
+import { ConversationCacheContext } from '../contexts/ConversationCacheContext';
 
 const useStyles = makeStyles((theme) => ({
   messageText: {
@@ -42,10 +43,12 @@ export function ChatsView(props: ChatsViewProps) {
   const { isMobile } = props;
   const classes = useStyles();
   const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
-  const filteredConversations = useRef<Array<IConversation>>([]);
-  const [conversations, setConversations] = useStateIfMounted<Array<IConversation>>([]);
+  const [filteredConversations, setFilteredConversations] = useState<Array<IConversation>>([]);
+  // const [conversations, setConversations] = useStateIfMounted<Array<IConversation>>([]);
   const [allUsers, setAllUsers] = useStateIfMounted<Array<IUser>>([]);
   const [searchStr, setSearchStr] = useStateIfMounted<string>('');
+  const { state, dispatch } = useContext(ConversationCacheContext);
+  const conversations = Object.values(state.conversations);
   const userMap = useMemo(() => {
     const map: Record<string, IUser> = {};
     allUsers.forEach((user) => {
@@ -56,16 +59,22 @@ export function ChatsView(props: ChatsViewProps) {
 
   const onSearchSubmit = (data: FormValues) => {
     const { search } = data;
-    filteredConversations.current = conversations.filter((c) => conversationMatchSearch(c, search));
+    setFilteredConversations(conversations.filter((c) => conversationMatchSearch(c, search)));
     setSearchStr(search);
   };
 
   useEffect(() => {
-    getConversations().then((res) => {
-      filteredConversations.current = res.conversations.filter((c) => conversationMatchSearch(c, searchStr));
-      setConversations(res.conversations);
-    });
-  }, []);
+    if (conversations.length === 0) {
+      getConversations().then((res) => {
+        setFilteredConversations(res.conversations.filter((c) => conversationMatchSearch(c, searchStr)));
+        if (conversations.length === 0) {
+          dispatch({ type: 'SET_CONVERSATIONS', conversations: res.conversations });
+        }
+      });
+    } else {
+      setFilteredConversations(conversations.filter((c) => conversationMatchSearch(c, searchStr)));
+    }
+  }, [state.conversations]);
 
   useEffect(() => {
     getAllUsers().then((res) => {
@@ -110,7 +119,7 @@ export function ChatsView(props: ChatsViewProps) {
         </form>
 
         <Box mt={2} display="flex" flexDirection="column">
-          {filteredConversations.current.map((c, i) => (
+          {filteredConversations.map((c, i) => (
             <Box key={`${c}-${i}`} display="flex" marginY={1} alignItems="center">
               <Link to={`/${c.id}`}>
                 <Avatar src={c.avatarUrl}></Avatar>

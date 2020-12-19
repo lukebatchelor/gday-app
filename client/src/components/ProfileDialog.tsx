@@ -88,7 +88,6 @@ export function ProfileDialog(props: ProfileDialogProps) {
   const saveAndClose = async () => {
     if (uploadedImg) {
       const res = await setUserAvatar(profileUser.id, uploadedImg);
-      console.log('here', res);
       if (res && res.location) {
         await setUserDetails(profileUser.id, { displayName: profileUser.displayName, avatarUrl: res.location });
       }

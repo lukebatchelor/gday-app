@@ -19,9 +19,7 @@ export function Compose(props: ComposeProps) {
 
   const { handleSubmit, control } = useForm<FormValues>({ defaultValues });
 
-  const onComposeSubmit = (data: FormValues) => {
-    console.log('Compose submit', data);
-  };
+  const onComposeSubmit = (data: FormValues) => {};
 
   return (
     <form noValidate onSubmit={handleSubmit(onComposeSubmit)}>
