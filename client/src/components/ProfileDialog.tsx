@@ -12,8 +12,10 @@ import {
   makeStyles,
   Slide,
   Slider,
+  TextField,
   Typography,
 } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
 import { TransitionProps } from '@material-ui/core/transitions';
 import { UserContext } from '../contexts/UserContext';
 import { setUserAvatar, setUserDetails } from '../api';
@@ -35,16 +37,20 @@ const Transition = React.forwardRef(function Transition(
 type ProfileDialogProps = {
   isOpen: boolean;
   handleClose: () => void;
+  profileUser: IUser;
 };
 export function ProfileDialog(props: ProfileDialogProps) {
   const classes = useStyles();
-  const { isOpen, handleClose } = props;
+  const { isOpen, handleClose, profileUser } = props;
   const [user] = useContext(UserContext);
-  const [isEditing, setIsEditing] = useState<boolean>(true);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [imgScale, setImgScale] = useState<number>(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [uploadedImg, setUploadedImg] = useState(null);
+  const [displayName, setDisplayName] = useState<string>('');
+
+  const showEditButton = profileUser && user && profileUser.id === user.id;
 
   const handleImgScaleChange = (e: any, newScale: number) => {
     setImgScale(newScale);
@@ -69,35 +75,63 @@ export function ProfileDialog(props: ProfileDialogProps) {
     fileReader.readAsDataURL(image);
   };
   const onUploadClick = () => {
-    fileInputRef.current.click();
+    if (isEditing || showEditButton) {
+      if (!isEditing) setIsEditing(true);
+      fileInputRef.current.click();
+    }
+  };
+  const closeDialog = () => {
+    setIsEditing(false);
+    setDisplayName('');
+    handleClose();
   };
   const saveAndClose = async () => {
     if (uploadedImg) {
-      const res = await setUserAvatar(user.id, uploadedImg);
+      const res = await setUserAvatar(profileUser.id, uploadedImg);
       console.log('here', res);
       if (res && res.location) {
-        await setUserDetails(user.id, { displayName: user.displayName, avatarUrl: res.location });
+        await setUserDetails(profileUser.id, { displayName: profileUser.displayName, avatarUrl: res.location });
       }
     }
-    handleClose();
+    closeDialog();
   };
+
+  const onDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDisplayName(e.target.value);
+  };
+  const onEditClicked = () => {
+    setIsEditing(true);
+  };
+
+  if (!profileUser) return null;
 
   return (
     <Dialog
       open={isOpen}
       TransitionComponent={Transition}
       keepMounted
-      onClose={handleClose}
+      onClose={closeDialog}
       maxWidth="xs"
       fullWidth={true}
       aria-labelledby="profile-dialog-title"
       aria-describedby="profile-dialog-text"
     >
-      <DialogTitle id="profile-dialog-title">Profile</DialogTitle>
+      <DialogTitle id="profile-dialog-title">
+        <Box display="flex">
+          Profile
+          {showEditButton && !isEditing && (
+            <Box ml="auto">
+              <IconButton onClick={onEditClicked}>
+                <EditIcon />
+              </IconButton>
+            </Box>
+          )}
+        </Box>
+      </DialogTitle>
       <DialogContent>
         <Box display="flex" flexDirection="column" alignItems="center">
           <IconButton onClick={onUploadClick}>
-            <Avatar src={imgSrc || user.avatarUrl} className={classes.avatar} />
+            <Avatar src={imgSrc || profileUser.avatarUrl} className={classes.avatar} />
           </IconButton>
           <input
             type="file"
@@ -106,28 +140,44 @@ export function ProfileDialog(props: ProfileDialogProps) {
             ref={fileInputRef}
             onChange={onFileSelect}
           />
-          <DialogContentText id="profile-dialog-text">
-            <Typography variant="h5">{user.displayName}</Typography>
-          </DialogContentText>
-          <Box width="80%">
-            <Slider
-              value={imgScale}
-              onChange={handleImgScaleChange}
-              min={1}
-              max={3}
-              step={0.01}
-              aria-labelledby="continuous-slider"
-            />
-          </Box>
+          {isEditing ? (
+            <Box width="80%">
+              <TextField
+                label="Display Name"
+                placeholder={profileUser.displayName}
+                size="medium"
+                fullWidth
+                onChange={onDisplayNameChange}
+                value={displayName}
+              />
+            </Box>
+          ) : (
+            <Typography variant="h5">{profileUser.displayName}</Typography>
+          )}
+
+          {/* {isEditing && (
+            <Box width="80%" mt={4}>
+              <Slider
+                value={imgScale}
+                onChange={handleImgScaleChange}
+                min={1}
+                max={3}
+                step={0.01}
+                aria-labelledby="continuous-slider"
+              />
+            </Box>
+          )} */}
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Cancel
+        <Button onClick={closeDialog} color="primary">
+          {isEditing ? 'Cancel' : 'Close'}
         </Button>
-        <Button onClick={saveAndClose} color="primary">
-          Save
-        </Button>
+        {isEditing && (
+          <Button onClick={saveAndClose} color="primary">
+            Save
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
