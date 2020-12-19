@@ -115,11 +115,24 @@ export function AppHeader(props: AppHeaderProps) {
           </IconButton>
         </Toolbar>
       </Box>
-      <Toolbar>
-        <Avatar src={avatarUrl}></Avatar>
-        <Box mr={2} />
-        <Typography variant="h5">{isComposing ? 'Create new chat' : title}</Typography>
-      </Toolbar>
+      <Box width="65vw">
+        <Toolbar>
+          <Avatar src={avatarUrl}></Avatar>
+          <Box mr={2} />
+          <Typography variant="h5">{isComposing ? 'Create new chat' : title}</Typography>
+          {selectedConversationId && (
+            <IconButton
+              aria-label="Conversation info"
+              onClick={onConversationInfoOpen}
+              color="inherit"
+              size="small"
+              className={classes.composeButton}
+            >
+              <InfoIcon />
+            </IconButton>
+          )}
+        </Toolbar>
+      </Box>
     </AppBar>
   );
 }
