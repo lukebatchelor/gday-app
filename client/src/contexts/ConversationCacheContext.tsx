@@ -18,7 +18,8 @@ export type State = {
 export type Action =
   | { type: 'NEW_MESSAGE'; conversationId: string; message: IMessage }
   | { type: 'ADD_MESSAGES'; conversationId: string; messages: IMessage[] }
-  | { type: 'SET_CONVERSATIONS'; conversations: IConversation[] };
+  | { type: 'SET_CONVERSATIONS'; conversations: IConversation[] }
+  | { type: 'SET_CONVERSATION'; conversation: IConversation };
 
 const initialState: State = {
   conversations: {},
@@ -73,6 +74,15 @@ const ConversationCacheContextProvider: React.FC = (props: Props) => {
         return {
           ...state,
           conversations,
+        };
+      }
+      case 'SET_CONVERSATION': {
+        return {
+          ...state,
+          conversations: {
+            ...state.conversations,
+            [action.conversation.id]: action.conversation,
+          },
         };
       }
       default:

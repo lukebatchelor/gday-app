@@ -6,6 +6,7 @@ import { Link, useNavigate } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { getConversationDetails } from '../api';
 import { UserContext } from '../contexts/UserContext';
+import { ConversationCacheContext } from '../contexts/ConversationCacheContext';
 
 const useStyles = makeStyles((theme) => ({
   composeButton: {
@@ -37,26 +38,16 @@ export function AppHeader(props: AppHeaderProps) {
     onConversationInfoOpen,
   } = props;
   const [user] = useContext(UserContext);
-  const [chatName, setChatName] = useState('Group chat');
-  const [conversationAvatarUrl, setConversationAvatarUrl] = useState('/404');
+  const { state } = useContext(ConversationCacheContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!selectedConversationId) {
-      console.log('No selected conversation');
-      return;
-    }
-    getConversationDetails(selectedConversationId).then((res) => {
-      setChatName(res.conversation.name);
-      setConversationAvatarUrl(res.conversation.avatarUrl);
-    });
-  }, [selectedConversationId]);
+  const conversation = state.conversations[selectedConversationId];
+  // avatar will either be blank (when creating new message), the conversationAvatar (when in a conversation)
+  // or the user avatar (when in conversation view for getting to profile view)
+  const avatarUrl = isComposing ? '' : conversation ? conversation.avatarUrl : user.avatarUrl;
+  const title = isComposing ? 'New Message' : conversation ? conversation.name : 'Chats';
 
   if (isMobile) {
-    // avatar will either be blank (when creating new message), the conversationAvatar (when in a conversation)
-    // or the user avatar (when in conversation view for getting to profile view)
-    const avatarUrl = isComposing ? '' : selectedConversationId ? conversationAvatarUrl : user.avatarUrl;
-    const title = isComposing ? 'New Message' : selectedConversationId ? chatName : 'Chats';
     const onBackClick = () => {
       if (isComposing) onComposeClose();
       else navigate('..');
@@ -125,9 +116,9 @@ export function AppHeader(props: AppHeaderProps) {
         </Toolbar>
       </Box>
       <Toolbar>
-        <Avatar src={conversationAvatarUrl}></Avatar>
+        <Avatar src={avatarUrl}></Avatar>
         <Box mr={2} />
-        <Typography variant="h5">{isComposing ? 'Create new chat' : chatName}</Typography>
+        <Typography variant="h5">{isComposing ? 'Create new chat' : title}</Typography>
       </Toolbar>
     </AppBar>
   );

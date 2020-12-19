@@ -121,7 +121,6 @@ export async function uploadConversationFile(conversationId: string, file: any) 
     method: 'POST',
     body: formData,
   });
-  console.log(res);
   return res.json();
 }
 
@@ -143,6 +142,5 @@ export async function setUserAvatar(userId: string, userAvatar: any) {
     method: 'POST',
     body: formData,
   });
-  console.log(res);
   return res.json();
 }

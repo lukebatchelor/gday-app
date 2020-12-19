@@ -44,7 +44,7 @@ export function ConversationInfoDialog(props: ConversationInfoDialogProps) {
   const classes = useStyles();
   const { isOpen, handleClose, conversationId } = props;
   const [user] = useContext(UserContext);
-  const { state } = useContext(ConversationCacheContext);
+  const { state, dispatch } = useContext(ConversationCacheContext);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [imgScale, setImgScale] = useState<number>(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,10 +90,14 @@ export function ConversationInfoDialog(props: ConversationInfoDialogProps) {
     if (uploadedImg) {
       const res = await uploadConversationFile(conversationId, uploadedImg);
       if (res && res.location) {
-        await setConversationDetails(conversationId, { avatarUrl: res.location, name: conversationName });
+        const conversationDetails = { avatarUrl: res.location, name: conversationName };
+        await setConversationDetails(conversationId, conversationDetails);
+        dispatch({ type: 'SET_CONVERSATION', conversation: { ...conversation, ...conversationDetails } });
       }
     } else {
-      await setConversationDetails(conversationId, { avatarUrl: conversation.avatarUrl, name: conversationName });
+      const conversationDetails = { avatarUrl: conversation.avatarUrl, name: conversationName };
+      await setConversationDetails(conversationId, conversationDetails);
+      dispatch({ type: 'SET_CONVERSATION', conversation: { ...conversation, ...conversationDetails } });
     }
     closeDialog();
   };
