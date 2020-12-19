@@ -91,8 +91,10 @@ export function ProfileDialog(props: ProfileDialogProps) {
     if (uploadedImg) {
       const res = await setUserAvatar(profileUser.id, uploadedImg);
       if (res && res.location) {
-        await setUserDetails(profileUser.id, { displayName: profileUser.displayName, avatarUrl: res.location });
+        await setUserDetails(profileUser.id, { displayName: displayName, avatarUrl: res.location });
       }
+    } else {
+      await setUserDetails(profileUser.id, { displayName: displayName, avatarUrl: profileUser.avatarUrl });
     }
     closeDialog();
   };
