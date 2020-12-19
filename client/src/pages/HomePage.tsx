@@ -40,6 +40,10 @@ export function HomePage(props: HomeProps) {
     setIsComposing(true);
     setCurMobileView('Conversation');
   };
+  const onComposeClose = () => {
+    setIsComposing(false);
+    setCurMobileView('Chats');
+  };
 
   useEffect(() => {
     (async () => {
@@ -61,6 +65,7 @@ export function HomePage(props: HomeProps) {
         <AppHeader
           isMobile={true}
           isComposing={isComposing}
+          onComposeClose={onComposeClose}
           onCompose={onComposeClicked}
           selectedConversationId={conversationId}
           onOpenProfileDialog={openProfileDialog}

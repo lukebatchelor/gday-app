@@ -20,11 +20,12 @@ type AppHeaderProps = {
   onCompose: () => void;
   onOpenProfileDialog?: (user: IUser) => void;
   isComposing: boolean;
+  onComposeClose?: () => void;
   selectedConversationId?: string;
 };
 export function AppHeader(props: AppHeaderProps) {
   const classes = useStyles();
-  const { isMobile, onCompose, isComposing, selectedConversationId, onOpenProfileDialog } = props;
+  const { isMobile, onCompose, isComposing, onComposeClose, selectedConversationId, onOpenProfileDialog } = props;
   const [user] = useContext(UserContext);
   const [chatName, setChatName] = useState('Group chat');
   const [conversationAvatarUrl, setConversationAvatarUrl] = useState('/404');
@@ -41,35 +42,46 @@ export function AppHeader(props: AppHeaderProps) {
     });
   }, [selectedConversationId]);
 
-  if (isMobile)
+  if (isMobile) {
+    // avatar will either be blank (when creating new message), the conversationAvatar (when in a conversation)
+    // or the user avatar (when in conversation view for getting to profile view)
+    const avatarUrl = isComposing ? '' : selectedConversationId ? '' : user.avatarUrl;
+    const title = isComposing ? 'New Message' : selectedConversationId ? chatName : 'Chats';
+    const onBackClick = () => {
+      if (isComposing) onComposeClose();
+      else navigate('..');
+    };
     return (
       <AppBar style={{ flexDirection: 'column' }}>
         <Box width="auto">
           <Toolbar>
             {(isComposing || selectedConversationId) && (
-              <IconButton onClick={() => navigate(!isComposing ? '..' : '/')}>
+              <IconButton onClick={onBackClick}>
                 <ArrowBackIcon />
               </IconButton>
             )}
 
             <IconButton onClick={() => onOpenProfileDialog(user)}>
-              <Avatar src={user.avatarUrl}></Avatar>
+              <Avatar src={avatarUrl}></Avatar>
             </IconButton>
             <Box mr={2} />
-            <Typography variant="h5">Chats</Typography>
-            <IconButton
-              aria-label="Compose new message"
-              onClick={onCompose}
-              color="inherit"
-              size="small"
-              className={classes.composeButton}
-            >
-              <CreateIcon fontSize="small" />
-            </IconButton>
+            <Typography variant="h5">{title}</Typography>
+            {!isComposing && !selectedConversationId && (
+              <IconButton
+                aria-label="Compose new message"
+                onClick={onCompose}
+                color="inherit"
+                size="small"
+                className={classes.composeButton}
+              >
+                <CreateIcon fontSize="small" />
+              </IconButton>
+            )}
           </Toolbar>
         </Box>
       </AppBar>
     );
+  }
 
   return (
     <AppBar style={{ flexDirection: 'row' }}>
