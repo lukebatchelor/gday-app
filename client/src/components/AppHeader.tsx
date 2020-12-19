@@ -57,14 +57,19 @@ export function AppHeader(props: AppHeaderProps) {
         <Box width="auto">
           <Toolbar>
             {(isComposing || selectedConversationId) && (
-              <IconButton onClick={onBackClick}>
-                <ArrowBackIcon />
-              </IconButton>
+              <>
+                <IconButton onClick={onBackClick}>
+                  <ArrowBackIcon />
+                </IconButton>
+                <Avatar src={avatarUrl}></Avatar>
+              </>
             )}
 
-            <IconButton onClick={() => !isComposing && !selectedConversationId && onOpenProfileDialog(user)}>
-              <Avatar src={avatarUrl}></Avatar>
-            </IconButton>
+            {!isComposing && !selectedConversationId && (
+              <IconButton onClick={() => !isComposing && !selectedConversationId && onOpenProfileDialog(user)}>
+                <Avatar src={avatarUrl}></Avatar>
+              </IconButton>
+            )}
             <Box mr={2} />
             <Typography variant="h5">{title}</Typography>
             {!isComposing && !selectedConversationId && (

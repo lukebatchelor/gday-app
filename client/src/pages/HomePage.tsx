@@ -102,6 +102,7 @@ export function HomePage(props: HomeProps) {
         onCompose={onComposeClicked}
         selectedConversationId={conversationId}
         onOpenProfileDialog={openProfileDialog}
+        onConversationInfoOpen={onConversationInfoOpen}
       />
       <Box className={classes.spacer} />
       <Box display="flex" flexDirection="row" height="calc(100vh - 64px)">
@@ -109,6 +110,11 @@ export function HomePage(props: HomeProps) {
         <ConversationView isMobile={false} isComposing={isComposing} conversationId={conversationId} />
       </Box>
       <ProfileDialog isOpen={!!profileDialogOpen} handleClose={closeProfileDialog} profileUser={profileDialogOpen} />
+      <ConversationInfoDialog
+        isOpen={!!conversationDialogOpen}
+        handleClose={closeConversationInfoDialog}
+        conversationId={conversationId}
+      />
     </Box>
   );
 }
