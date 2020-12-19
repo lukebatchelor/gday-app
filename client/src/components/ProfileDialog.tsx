@@ -19,6 +19,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { TransitionProps } from '@material-ui/core/transitions';
 import { UserContext } from '../contexts/UserContext';
 import { setUserAvatar, setUserDetails } from '../api';
+import { navigate, useNavigate } from '@reach/router';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -49,6 +50,7 @@ export function ProfileDialog(props: ProfileDialogProps) {
   const [imgSrc, setImgSrc] = useState(null);
   const [uploadedImg, setUploadedImg] = useState(null);
   const [displayName, setDisplayName] = useState<string>('');
+  const navigate = useNavigate();
 
   const showEditButton = profileUser && user && profileUser.id === user.id;
 
@@ -101,6 +103,9 @@ export function ProfileDialog(props: ProfileDialogProps) {
   const onEditClicked = () => {
     setIsEditing(true);
   };
+  const logout = () => {
+    navigate('/sign-in');
+  };
 
   if (!profileUser) return null;
 
@@ -116,7 +121,7 @@ export function ProfileDialog(props: ProfileDialogProps) {
       aria-describedby="profile-dialog-text"
     >
       <DialogTitle id="profile-dialog-title">
-        <Box display="flex">
+        <Box display="flex" alignItems="center">
           Profile
           {showEditButton && !isEditing && (
             <Box ml="auto">
@@ -169,6 +174,11 @@ export function ProfileDialog(props: ProfileDialogProps) {
         </Box>
       </DialogContent>
       <DialogActions>
+        {!isEditing && (
+          <Button onClick={logout} color="secondary" style={{ marginRight: 'auto' }}>
+            Logout
+          </Button>
+        )}
         <Button onClick={closeDialog} color="primary">
           {isEditing ? 'Cancel' : 'Close'}
         </Button>

@@ -69,10 +69,6 @@ export async function attemptLogin(userName: string, password: string) {
   return postRequest<PostLoginRequestBody, PostLoginResponseBody>('/api/users/authenticate', body);
 }
 
-export async function logout() {
-  return getRequest<any>('/api/users/logout');
-}
-
 export async function checkLoggedIn() {
   return getRequest<GetAuthenticatedResponseBody>('/api/users/authenticated');
 }
