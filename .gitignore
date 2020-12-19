@@ -7,3 +7,4 @@ docker/redis
 yarn-error.log
 uploads
 gday-messenger-v*.tgz
+release.tgz

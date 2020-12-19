@@ -24,7 +24,7 @@
     "db:migrations:show": "TS_NODE_FILES=true ts-node ./node_modules/.bin/typeorm migration:show",
     "db:migrations:generate": "TS_NODE_FILES=true ts-node ./node_modules/.bin/typeorm migration:generate -n",
     "db:migrations:run": "TS_NODE_FILES=true ts-node ./node_modules/.bin/typeorm migration:run",
-    "release:pull": "VERSION=`echo $npm_package_version`; curl \"https://github.com/lukebatchelor/gday-app/releases/download/v$VERSION/release.tgz\" -sL -o release.tgz; tar -zxvf release.tgz --strip-components=1"
+    "release:pull": "VERSION=`echo $npm_package_version`; curl \"https://github.com/lukebatchelor/gday-app/releases/download/v$VERSION/release.tgz\" -sL -o release.tgz; tar -zxvf release.tgz --strip-components=1 package/dist"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
