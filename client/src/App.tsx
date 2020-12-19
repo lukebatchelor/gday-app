@@ -18,7 +18,7 @@ type AppProps = {
 };
 export function App(props: AppProps) {
   const appContext = useContext(AppContext);
-  const [, setUser] = useContext(UserContext);
+  const [user, setUser] = useContext(UserContext);
   const { state, dispatch } = useContext(ConversationCacheContext);
 
   useEffect(() => {
@@ -45,8 +45,8 @@ export function App(props: AppProps) {
       <Router basepath={appContext.basePathPrefix}>
         <SignInPage path="/sign-in" />
         <SignUpPage path="/sign-up" />
-        <HomePage path="/:conversationId" />
-        <HomePage default path="/" />
+        {user && user.loggedIn && <HomePage path="/:conversationId" />}
+        {user && user.loggedIn && <HomePage default path="/" />}
       </Router>
     </ThemeProvider>
   );
